@@ -1,4 +1,9 @@
 services:
+    logger:
+        class: Symfony\Component\HttpKernel\Log\Logger
+        arguments:
+            $minLevel: 'emergency'
+
     Tests\Stub\Search\InMemoryEmbeddingAdapter: ~
 
     Tests\Stub\Search\InMemorySemanticSearchAdapter: ~

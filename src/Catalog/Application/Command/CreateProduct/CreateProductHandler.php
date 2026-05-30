@@ -16,8 +16,10 @@ use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Model\ProductName;
 use App\Catalog\Domain\Model\Stock;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsMessageHandler]
 final class CreateProductHandler
@@ -25,6 +27,8 @@ final class CreateProductHandler
     public function __construct(
         private readonly ProductRepositoryInterface $repository,
         private readonly MessageBusInterface $eventBus,
+        #[Autowire(service: 'cache.products')]
+        private readonly TagAwareCacheInterface $cache,
     ) {}
 
     public function __invoke(CreateProductCommand $command): string
@@ -50,6 +54,8 @@ final class CreateProductHandler
         );
 
         $this->repository->save($product);
+
+        $this->cache->invalidateTags(['products.list']);
 
         foreach ($product->pullDomainEvents() as $event) {
             $this->eventBus->dispatch($event);

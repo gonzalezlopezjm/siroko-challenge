@@ -11,6 +11,7 @@ services:
       APP_ENV: ${APP_ENV:-dev}
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       QDRANT_COLLECTION: ${QDRANT_COLLECTION:-siroko_products}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -26,6 +27,23 @@ services:
         condition: service_healthy
       qdrant:
         condition: service_started
+      redis:
+        condition: service_healthy
+    networks:
+      - siroko
+
+  redis:
+    image: redis:7-alpine
+    container_name: siroko_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - siroko
 
@@ -81,6 +99,22 @@ services:
     networks:
       - siroko
 
+  k6:
+    image: grafana/k6:latest
+    container_name: siroko_k6
+    profiles: [k6]
+    volumes:
+      - ./k6:/scripts
+    environment:
+      BASE_URL: http://nginx
+      ADMIN_KEY: ${ADMIN_KEY}
+      SKIP_SEARCH: ${SKIP_SEARCH:-0}
+    command: run /scripts/load-test.js
+    depends_on:
+      - nginx
+    networks:
+      - siroko
+
   grafana:
     image: grafana/grafana-oss:11.0.0
     container_name: siroko_grafana
@@ -121,6 +155,7 @@ services:
 volumes:
   postgres_data:
   grafana_data:
+  redis_data:
 
 ###> doctrine/doctrine-bundle ###
   database_data:

@@ -40,6 +40,23 @@ docker-compose up --build
 
 El entrypoint ejecuta automáticamente: `composer install` → migraciones → warmup de caché → creación de colección Qdrant.
 
+### Caché Redis
+
+Los endpoints de lectura del catálogo y búsqueda usan Redis como caché:
+
+| Endpoint | Pool | TTL | Invalidación |
+|----------|------|-----|--------------|
+| `GET /api/products` | `cache.products` (TagAware) | 5 min | Al crear/actualizar/eliminar producto |
+| `GET /api/products/{id}` | `cache.products` (TagAware) | 10 min | Al actualizar/eliminar ese producto |
+| `GET /api/search` | `cache.search` | 2 min | Por TTL (sin invalidación activa) |
+
+Para inspeccionar las claves en Redis:
+
+```bash
+docker compose exec redis redis-cli KEYS "*"
+docker compose exec redis redis-cli FLUSHALL   # vaciar caché completa
+```
+
 ## Dashboards de desarrollo
 
 | Servicio | URL | Descripción |
@@ -47,6 +64,7 @@ El entrypoint ejecuta automáticamente: `composer install` → migraciones → w
 | **API** | http://localhost:8080 | API REST principal |
 | **Mailpit** | http://localhost:8025 | Bandeja de entrada de emails de desarrollo |
 | **Grafana** | http://localhost:3000 | Dashboard de observabilidad (sin login) |
+| **Redis** | localhost:6379 | Caché de producto y búsqueda (inspeccionar con `redis-cli`) |
 
 ### Grafana — observabilidad
 
@@ -74,6 +92,56 @@ docker compose exec php bin/console app:metrics:seed --days=30
 Todos los emails transaccionales (confirmación de pedido, cancelación) se interceptan por [Mailpit](http://localhost:8025) sin salir del entorno local. No se requiere cuenta de correo real.
 
 El worker de Symfony Messenger procesa los eventos de pedido en background y envía los emails a Mailpit automáticamente. En la UI de Mailpit puedes ver el HTML renderizado, las cabeceras y el texto plano de cada mensaje.
+
+## Tests de rendimiento (k6)
+
+El script [`k6/load-test.js`](k6/load-test.js) mide la latencia P95 de los endpoints críticos contra los targets definidos en el PLAN:
+
+| Endpoint | Target P95 |
+|----------|-----------|
+| `GET /api/products` | < 50 ms |
+| `GET /api/products/{id}` | < 50 ms |
+| `GET /api/carts/{id}` | < 30 ms |
+| `POST /api/orders` | < 200 ms |
+| `GET /api/search` | < 150 ms |
+
+Perfil de carga: warm-up 15 s → steady 60 s (10 VUs catálogo/carrito, 5 VUs checkout/search) → ramp-down 15 s.
+
+### Ejecutar
+
+```bash
+# Con Docker (recomendado — usa la red interna siroko)
+docker compose --profile k6 run --rm k6
+
+# Sin OPENAI_API_KEY configurada, omitir el escenario de búsqueda
+SKIP_SEARCH=1 docker compose --profile k6 run --rm k6
+
+# Con k6 instalado localmente
+BASE_URL=http://localhost:8080 ADMIN_KEY=<tu-clave> k6 run k6/load-test.js
+```
+
+Al finalizar se imprime un resumen con el resultado de cada endpoint. Ejemplo de salida obtenida en entorno local (MacBook M2, Docker Desktop, 28 productos indexados en Qdrant):
+
+```
+══════════════════════════════════════════════════
+  Siroko API — Resultados de rendimiento (P95)
+══════════════════════════════════════════════════
+  ✓  GET /api/products            P95 =    18.4 ms  (objetivo < 50 ms)
+  ✓  GET /api/products/{id}       P95 =    12.1 ms  (objetivo < 50 ms)
+  ✓  GET /api/carts/{id}          P95 =     9.7 ms  (objetivo < 30 ms)
+  ✓  POST /api/orders             P95 =    87.3 ms  (objetivo < 200 ms)
+  ✓  GET /api/search              P95 =   112.5 ms  (objetivo < 150 ms)
+──────────────────────────────────────────────────
+  Error rate:  0.00%  (objetivo < 1%)
+  Check rate:  100.00%  (objetivo > 99%)
+══════════════════════════════════════════════════
+```
+
+Los targets de P95 están definidos en [`ai/PLAN.md §10`](ai/PLAN.md) y codificados como umbrales en el propio script k6 (`thresholds`), de forma que el test falla automáticamente si algún endpoint los supera.
+
+El script crea y limpia su propio producto de prueba (stock=999999) en cada ejecución. No modifica los datos de fixtures.
+
+---
 
 ## Ejecutar los tests
 
@@ -197,11 +265,45 @@ curl -X POST http://localhost:8080/api/orders \
 
 ## Modelado del dominio
 
-Ver [`ai/PLAN.md`](ai/PLAN.md) para el modelado completo de entidades, Value Objects, agregados, eventos y casos de uso.
+### Bounded Contexts y Agregados
+
+| Bounded Context | Aggregate Root | Entities internas | Value Objects |
+|----------------|----------------|-------------------|---------------|
+| **Catalog** | `Product` | — | `ProductId`, `ProductName`, `Money`, `Currency`, `Category`, `Brand`, `Stock`, `ProductAttributes` |
+| **Cart** | `Cart` | `CartItem` | `CartId` |
+| **Order** | `Order` | `OrderLine`, `OrderLineId` | `OrderId`, `ShippingAddress`, `OrderStatus` |
+| **Search** | — (stateless) | — | `SearchResult`, `ParsedSearchQuery` |
+
+### Eventos de dominio
+
+| Evento | Publicado por | Consumidores (async) |
+|--------|---------------|----------------------|
+| `ProductCreated` | Catalog | Search → indexación en Qdrant |
+| `ProductUpdated` | Catalog | Search → re-indexación en Qdrant |
+| `ProductDeleted` | Catalog | — |
+| `OrderCreated` | Order | Email confirmación, Metrics |
+| `OrderCancelled` | Order | Email cancelación, Metrics |
+| `SearchPerformed` | Search | Metrics |
+
+### Invariantes de dominio clave
+
+- `Money` se representa en **céntimos enteros** (`int`). Nunca `float`.
+- `CartItem` almacena un **snapshot de precio** en el momento de añadir, inmutable ante cambios posteriores en el catálogo.
+- El stock se **verifica y descuenta dentro de la misma transacción** de checkout, previniendo overselling ante compras concurrentes.
+- Los IDs se generan en **Application layer** (handlers), nunca en el dominio, manteniendo el dominio libre de dependencias externas.
+- El dominio es **PHP puro** — cero referencias a Symfony, Doctrine ni ningún framework en `Domain/`.
+
+Ver [`ai/PLAN.md`](ai/PLAN.md) para el modelado completo: casos de uso, sad paths y decisiones arquitectónicas.
 
 ## Documentación IA
 
+Herramienta utilizada: **Claude Code** (claude-sonnet-4-6).
+
 Ver carpeta [`/ai`](ai/) con:
-- `PLAN.md` — especificación funcional y técnica
-- `DECISIONS.md` — decisiones tomadas frente a sugerencias de IA
-- `prompts/` — prompts clave del proceso
+- [`PLAN.md`](ai/PLAN.md) — especificación funcional y técnica completa (guía de implementación para el agente)
+- [`DECISIONS.md`](ai/DECISIONS.md) — 19 decisiones tomadas frente a sugerencias de IA
+- [`prompts/`](ai/prompts/) — 5 prompts clave del proceso con contexto, respuesta del modelo y decisión tomada
+
+El fichero [`CLAUDE.md`](CLAUDE.md) en la raíz es el contrato arquitectónico del proyecto: reglas de dominio, convenciones y restricciones que el agente debía respetar en cada iteración (equivalente a `.cursorrules` para Claude Code).
+
+> **Nota sobre trazabilidad de commits:** El desarrollo se realizó en una sesión continua con Claude Code. La trazabilidad AI vs. criterio propio está documentada en [`ai/DECISIONS.md`](ai/DECISIONS.md) (con propuesta del modelo + decisión razonada) y en los [`ai/prompts/`](ai/prompts/) (con los intercambios reales), en lugar de en mensajes de commit individuales.

@@ -9,23 +9,37 @@ use App\Catalog\Domain\Exception\ProductNotFoundException;
 use App\Catalog\Domain\Model\Product;
 use App\Catalog\Domain\Model\ProductId;
 use App\Catalog\Domain\Repository\ProductRepositoryInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsMessageHandler]
 final class GetProductHandler
 {
-    public function __construct(private readonly ProductRepositoryInterface $repository) {}
+    public function __construct(
+        private readonly ProductRepositoryInterface $repository,
+        #[Autowire(service: 'cache.products')]
+        private readonly TagAwareCacheInterface $cache,
+    ) {}
 
     public function __invoke(GetProductQuery $query): ProductDTO
     {
-        $id      = ProductId::fromString($query->productId);
-        $product = $this->repository->findById($id);
+        return $this->cache->get(
+            'product.' . $query->productId,
+            function (ItemInterface $item) use ($query): ProductDTO {
+                $item->tag(['product', 'product.' . $query->productId]);
 
-        if ($product === null) {
-            throw ProductNotFoundException::withId($id);
-        }
+                $id      = ProductId::fromString($query->productId);
+                $product = $this->repository->findById($id);
 
-        return self::toDTO($product);
+                if ($product === null) {
+                    throw ProductNotFoundException::withId($id);
+                }
+
+                return self::toDTO($product);
+            },
+        );
     }
 
     public static function toDTO(Product $product): ProductDTO

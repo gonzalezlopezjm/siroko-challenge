@@ -22,6 +22,12 @@ RUN docker-php-ext-install \
     pdo_pgsql \
     zip
 
+# Redis extension (autoconf + build-base son necesarios para compilar phpredis con PECL)
+RUN apk add --no-cache --virtual .build-deps autoconf build-base \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
+
 # Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 

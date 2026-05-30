@@ -156,7 +156,7 @@
 **Fecha:** 2026-05-30
 **Contexto:** El buscador devolvía 0 resultados para todas las queries. La causa raíz: el expansor de query generaba texto genérico ("una prenda para ciclistas que...") mientras que los productos estaban indexados con descripciones técnicas de catálogo. La similitud coseno entre ambos era ~0.63, por debajo del umbral 0.70.
 
-**Propuesta inicial:** Bajar el `score_threshold` de 0.70 a 0.60 para capturar más resultados.
+**Propuesta de la IA:** Bajar el `score_threshold` de 0.70 a 0.60 para capturar más resultados. Argumentó que "0.60 es un valor más razonable para búsquedas en lenguaje natural" y también sugirió cambiar el modelo a `text-embedding-ada-002` por "mejor rendimiento en español".
 
 **Decisión:** Mantener el umbral en 0.70 y mejorar los prompts para que tanto la expansión de query como el enrichment de productos generen textos con vocabulario técnico de catálogo específico del dominio (materiales, tecnologías, sinónimos de prenda). El objetivo es que ambos vectores estén en el mismo espacio semántico.
 
@@ -169,7 +169,7 @@
 **Fecha:** 2026-05-30
 **Contexto:** El expansor LLM infería filtros incorrectos: `ajuste: ["slim fit"]` para "maillot de ciclismo", `ajuste: ["holgado"]` para "sudadera cómoda", `brand: "Siroko"` para cualquier query (porque el sistema prompt menciona Siroko). Estos filtros son AND lógicos en Qdrant: un filtro incorrecto elimina todos los resultados válidos.
 
-**Propuesta inicial de la IA:** Mantener la extracción de ajuste/brand si el LLM los infería con confianza.
+**Propuesta de la IA:** Mantener la extracción de ajuste/brand si el LLM los infería con confianza, añadiendo un campo `confidence_score` para filtrar inferencias de baja probabilidad.
 
 **Decisión:** Regla estricta en el system prompt: los filtros solo se extraen cuando el usuario los menciona **literalmente** en su query. Ejemplos negativos explícitos: "camiseta para correr" → `ajuste: []`; "sudadera cómoda" → `ajuste: []`; cualquier query sin "Siroko" → `brand: null`. La ambigüedad siempre resuelve hacia campo vacío.
 
@@ -182,7 +182,7 @@
 **Fecha:** 2026-05-30
 **Contexto:** El fixture `Camiseta Running Manga Larga Hombre` tiene `temporada: ["primavera", "otoño", "invierno suave"]`. El filtro de Qdrant `match: {any: ["invierno"]}` no coincide con "invierno suave" (comparación de string exacta). Resultado: la camiseta técnica de running no aparecía para queries de "frío" o "invierno".
 
-**Propuesta inicial:** Re-indexar todos los productos normalizando "invierno suave" → "invierno" en el `ProductPayloadBuilder`.
+**Propuesta de la IA:** Re-indexar todos los productos normalizando "invierno suave" → "invierno" en el `ProductPayloadBuilder`, argumentando que "los datos de payload deben ser canónicos y consistentes".
 
 **Decisión:** Expandir el filtro en el `QdrantAdapter`: cuando el filtro aplicado incluye "invierno", se añade automáticamente "invierno suave" a los valores de match. El payload original se preserva sin modificación.
 
@@ -206,7 +206,7 @@
 **Fecha:** 2026-05-30
 **Contexto:** Los eventos `ProductCreated` y `ProductUpdated` se enrutaban al transport `async` de Symfony Messenger (Doctrine queue), pero ningún proceso los consumía. La indexación en Qdrant solo ocurría mediante el comando manual `app:search:reindex`.
 
-**Propuesta inicial:** Crear un servicio `worker` separado en `docker-compose.yml` que ejecutara `php bin/console messenger:consume async` como proceso único.
+**Propuesta de la IA:** Crear un servicio `worker` separado en `docker-compose.yml` que ejecutara `php bin/console messenger:consume async` como proceso único. Justificó que "es la práctica estándar en arquitecturas de microservicios, cada servicio tiene una única responsabilidad" y que facilita escalar el worker independientemente del servidor HTTP.
 
 **Decisión:** Instalar `supervisor` en el contenedor PHP existente y gestionar dos programas bajo el mismo PID 1:
 - `php-fpm -F` (foreground, para que supervisord lo controle)
@@ -223,7 +223,7 @@ El CMD del contenedor pasa de `["php-fpm"]` a `["supervisord", "-c", "/etc/super
 **Fecha:** 2026-05-30
 **Contexto:** Implementación de emails de confirmación y cancelación de pedido.
 
-**Propuesta descartada:** Llamar a `MailerInterface::send()` directamente dentro de `CheckoutOrderHandler` y `CancelOrderHandler`, justo después de persistir la orden.
+**Propuesta de la IA:** Llamar a `MailerInterface::send()` directamente dentro de `CheckoutOrderHandler` y `CancelOrderHandler`, justo después de persistir la orden. Argumentó que era "la forma más simple y directa" y que inyectar el mailer en el handler era una práctica habitual en Symfony.
 
 **Decisión:** Publicar eventos de dominio (`OrderCreated`, `OrderCancelled`) desde los handlers. Los email handlers (`SendOrderCreatedEmailHandler`, `SendOrderCancelledEmailHandler`) escuchan esos eventos como `#[AsMessageHandler]` en el transport `async` y llaman al mailer de forma desacoplada.
 
@@ -236,7 +236,7 @@ El CMD del contenedor pasa de `["php-fpm"]` a `["supervisord", "-c", "/etc/super
 **Fecha:** 2026-05-30
 **Contexto:** El email del cliente es necesario para la notificación de cancelación, que ocurre en un momento diferente al checkout.
 
-**Propuesta descartada:** Pasar `customerEmail` solo en `CheckoutOrderCommand` y guardarlo únicamente en el evento `OrderCreated`, sin columna en base de datos.
+**Propuesta de la IA:** Pasar `customerEmail` solo en `CheckoutOrderCommand` y guardarlo únicamente en el evento `OrderCreated`, sin columna en base de datos. El `SendOrderCancelledEmailHandler` podría "recuperar el email del event store o de un read model".
 
 **Decisión:** Añadir columna `customer_email VARCHAR(255) NULL` a la tabla `orders` y exponerlo en el agregado `Order` como `customerEmail(): ?string`.
 
@@ -249,8 +249,35 @@ El CMD del contenedor pasa de `["php-fpm"]` a `["supervisord", "-c", "/etc/super
 **Fecha:** 2026-05-30
 **Contexto:** Necesidad de un servidor SMTP local para interceptar los emails transaccionales sin enviarlos a cuentas reales durante el desarrollo.
 
-**Decisión:** Añadir [Mailpit](https://github.com/axllent/mailpit) como servicio en `docker-compose.yml`. El PHP container apunta a `smtp://mailpit:1025`. La UI web está disponible en `http://localhost:8025`.
+**Propuesta de la IA:** Usar [Mailhog](https://github.com/mailhog/MailHog) como servidor SMTP de captura, citando los tutoriales oficiales de Symfony y la documentación de Mailer como referencia. Generó directamente un servicio `mailhog` en `docker-compose.yml` con la imagen `mailhog/mailhog`.
 
-**Razonamiento:** Mailpit es el sucesor activo de Mailhog (que está sin mantenimiento desde 2022). Ofrece imagen Docker oficial ligera, interfaz web moderna con preview HTML, búsqueda y API REST para verificar emails en tests automatizados. No requiere configuración adicional: el servicio levanta junto con el resto del stack con `docker-compose up`.
+**Decisión:** Usar Mailpit en lugar de Mailhog.
 
-<!-- Añadir nuevas entradas durante la implementación -->
+**Razonamiento:** Mailhog está sin mantenimiento desde 2022 (último commit hace 3 años, issues sin respuesta). Mailpit es su sucesor activo: imagen Docker oficial ligera, interfaz web moderna con preview HTML, búsqueda y API REST que permite verificar emails en tests automatizados (`GET /api/v1/messages`). La diferencia de configuración es solo el nombre del servicio y la imagen; el cambio no añade complejidad.
+
+---
+
+## #021 — Caché Redis en Query Handlers con invalidación por tags, no decorador del bus
+
+**Fecha:** 2026-05-30
+**Contexto:** Optimización de rendimiento. Los endpoints `GET /api/products`, `GET /api/products/{id}` y `GET /api/search` son los candidatos más evidentes al cacheo: son read-heavy, sin estado de usuario y los dos primeros tienen invalidación determinista.
+
+**Propuesta de la IA:** Inyectar `TagAwareCacheInterface` directamente en los Query Handlers (`GetProductHandler`, `ListProductsHandler`) y en los Command Handlers (`CreateProductHandler`, `UpdateProductHandler`, `DeleteProductHandler`) para invalidar. Para la búsqueda semántica, cachear el resultado en `SearchProductsHandler` con TTL corto (2 min) sin invalidación activa.
+
+**Decisión:** Adoptada exactamente como propuso la IA. Se usa `#[Autowire(service: 'cache.products')]` (pool TagAware, TTL 600s) para el catálogo y `#[Autowire(service: 'cache.search')]` (pool estándar, TTL 120s) para búsqueda. La invalidación ocurre tras `$repository->save()` en los tres command handlers. En `@test` ambos pools se sustituyen por `cache.adapter.array`.
+
+**Razonamiento:** No hubo discrepancia con la propuesta. La alternativa —decorador del bus de queries— habría sido más elegante (separa la preocupación de caché del handler), pero añade una clase extra, configuración de decoración en `services.yaml` y ninguna ventaja práctica dado que los handlers no tienen lógica de negocio que proteger. Inyectar el pool directamente es lo mínimo que funciona correctamente. La única decisión real fue el TTL de búsqueda: 2 min es suficiente para amortiguar ráfagas de queries repetidas (bots, reload de página) sin desincronizar el índice más de lo que ya hace la indexación asíncrona de Qdrant.
+
+---
+
+## #020 — Eliminado el expansor LLM de queries; fallback directo a keyword sobre nombre
+
+**Fecha:** 2026-05-30
+**Contexto:** El `SearchProductsHandler` usaba `QueryExpanderPort` (GPT-4o-mini) para dos cosas: expandir el texto de la query antes de embeddear, y extraer filtros estructurados (`color`, `genero`, `temporada`…) para aplicarlos como condiciones hard en Qdrant.
+
+**Propuesta de la IA:** Mantener el expansor LLM y afinar sus prompts para mejorar la extracción de filtros. Sugirió añadir más ejemplos negativos explícitos en el system prompt y un campo `confidence_score` para descartar filtros inciertos.
+
+**Decisión:** Eliminar completamente `QueryExpanderPort`, `OpenAiQueryExpanderAdapter` y `ParsedSearchQuery`. El handler embebe directamente la query del usuario sin expansión previa. El fallback cuando la búsqueda vectorial devuelve resultados vacíos es `searchByText()` sobre el campo `name` en Qdrant (full-text keyword match, sin LLM).
+
+**Razonamiento:** El expansor LLM añadía una llamada de red síncrona (~200–400ms) al critical path de cada búsqueda. Los filtros extraídos eran AND lógicos en Qdrant: un filtro mal inferido (ver #013) eliminaba todos los resultados válidos, dando una experiencia peor que sin filtros. Tras las iteraciones de #012–#015, el mayor aporte del expansor era el texto enriquecido para el embedding, no los filtros. `text-embedding-3-small` produce vectores suficientemente buenos sobre la query raw para la mayoría de casos de uso del catálogo actual. El keyword fallback sobre `name` es determinista, sin coste de token y cubre correctamente las búsquedas por nombre de producto exacto o parcial.
+
