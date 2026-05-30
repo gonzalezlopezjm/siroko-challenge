@@ -1,0 +1,1217 @@
+{
+  "_comment": "Muestra de productos reales Siroko para carga de datos de prueba. Formato compatible con POST /api/products. Precio en céntimos de euro.",
+  "products": [
+
+    {
+      "name": "Maillot M2 Pinerolo",
+      "description": "Maillot de manga corta ultraligero con tecnología Breathlock+ para máxima transpirabilidad. Tejido de poliéster y elastán 100% transpirable con corte Race Slim Fit. Ideal para salidas en carretera desde primavera hasta otoño. Cremallera SBS antirroces, bolsillos traseros con cierre y reflectante de seguridad.",
+      "price": { "amount": 4995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco", "verde"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["maillot manga corta"],
+        "ajuste": ["race slim fit"],
+        "tecnologia": ["Breathlock+", "UPF 50"],
+        "ocasion": ["entrenamiento", "competición", "salidas en carretera"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 80,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot SRX Pro HighTech",
+      "description": "Maillot premium de alto rendimiento fabricado en nylon y elastán de alta compresión. Sistema Xtra-Gripper antideslizante en mangas y bajo, tecnología Breathlock+ de máxima ventilación. El maillot de referencia para ciclistas exigentes que buscan rendimiento profesional. Compatible con GPS, bolsillos para bidón.",
+      "price": { "amount": 10995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["nylon", "elastán"],
+        "tipo": ["maillot manga corta", "premium"],
+        "ajuste": ["race fit", "alta compresión"],
+        "tecnologia": ["Xtra-Gripper", "Breathlock+", "UPF 50"],
+        "ocasion": ["competición", "entrenamiento intensivo", "salidas largas"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 45,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot M4 Oregon",
+      "description": "Maillot de manga larga térmico fabricado en tejido Carvico Colorado (poliamida y elastán) para condiciones frías. Ideal para salidas de otoño e invierno con temperaturas entre 5°C y 12°C. Interior térmico cepillado, cremallera larga, puños elásticos. Colores disponibles: naranja intenso y negro.",
+      "price": { "amount": 10995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["naranja", "negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["Carvico Colorado", "poliamida", "elastán"],
+        "tipo": ["maillot manga larga", "térmico"],
+        "ajuste": ["slim fit"],
+        "temperatura": ["5-12°C"],
+        "ocasion": ["entrenamiento invierno", "salidas frías", "otoño"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["hombre"]
+      },
+      "stock": 60,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot M2 Gravel Manga Larga",
+      "description": "Maillot de manga larga para ciclismo de gravel y aventura. Tejido de poliéster y elastán transpirable con tecnología Breathlock+. Diseño versátil que combina rendimiento técnico con estética de gravel. Bolsillos traseros amplios para rutas largas.",
+      "price": { "amount": 6995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["gris", "verde oliva"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["maillot manga larga", "gravel"],
+        "ajuste": ["regular fit"],
+        "tecnologia": ["Breathlock+"],
+        "ocasion": ["gravel", "aventura", "cicloturismo", "rutas largas"],
+        "temporada": ["primavera", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 55,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culotte BX Resistance",
+      "description": "Culotte de alto rendimiento con acolchado Strato+ de doble densidad apto para salidas de hasta 10 horas. Tejido principal en tejido italiano MITI de secado rápido. Tirantes ultraligeros con banda elástica ventilada. Ideal para ciclistas que afrontan largas distancias y maratones de fondo.",
+      "price": { "amount": 7149, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["tejido italiano MITI", "poliéster", "elastán"],
+        "tipo": ["culotte", "culotte largo"],
+        "acolchado": ["Strato+", "doble densidad"],
+        "horas_uso": ["hasta 10 horas"],
+        "ocasion": ["salidas largas", "fondo", "maratón", "cicloturismo"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 70,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culotte SRX Pro Elite",
+      "description": "Culotte premium con acolchado Strato++ y Elastic Interface® apto para salidas de 10 a 12 horas. El culotte más avanzado de la gama SRX para ciclistas profesionales y amateur exigentes. Tejido de alta compresión con paneles aerodinámicos. Compatible con el sistema de aero de los maillots SRX.",
+      "price": { "amount": 8495, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["nylon", "elastán"],
+        "tipo": ["culotte", "premium"],
+        "acolchado": ["Strato++", "Elastic Interface®"],
+        "horas_uso": ["10-12 horas"],
+        "ajuste": ["alta compresión", "aerodinámico"],
+        "ocasion": ["competición", "salidas muy largas", "fondistas", "gran fondo"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 40,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culotte Rugged Gravel",
+      "description": "Culotte específico para ciclismo de gravel con acolchado Elastic Interface® y tejido italiano MITI de secado ultrarrápido. Estética marrón terrosa inspirada en las pistas de tierra. Diseñado para aventureros que buscan comodidad en largas jornadas off-road. Compatible con zapatillas MTB.",
+      "price": { "amount": 5495, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["marrón", "tierra"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["tejido italiano MITI", "elastán"],
+        "tipo": ["culotte", "gravel"],
+        "acolchado": ["Elastic Interface®"],
+        "ajuste": ["regular fit"],
+        "ocasion": ["gravel", "off-road", "cicloaventura", "rutas de tierra"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 50,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Chaqueta J3 Souplesse",
+      "description": "Chaqueta de ciclismo resistente al viento y a la lluvia ligera para condiciones adversas. Tejido exterior con tratamiento DWR repelente al agua. Corte aerodinámico compatible con posición de ciclismo. Fácil de guardar en el bolsillo trasero del maillot. Bolsillos laterales con cremallera.",
+      "price": { "amount": 7999, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "azul marino"],
+        "talla": ["XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "DWR"],
+        "tipo": ["chaqueta ciclismo", "cortavientos"],
+        "proteccion": ["cortavientos", "repelente al agua"],
+        "ajuste": ["aerodinámico"],
+        "plegable": ["sí"],
+        "ocasion": ["entrenamiento, días de lluvia", "descensos", "primavera fría"],
+        "temporada": ["primavera", "otoño", "invierno suave"],
+        "genero": ["hombre"]
+      },
+      "stock": 35,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Chaleco SRX Pro Layer",
+      "description": "Chaleco cortavientos premium con tecnología Lunarcell+ resistente al agua y transpirable. Diseño minimalista y ultraligero que se guarda en el bolsillo trasero. Ideal como segunda capa en días variables de primavera y otoño. Reflectantes para mayor visibilidad.",
+      "price": { "amount": 9995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["Lunarcell+", "nylon"],
+        "tipo": ["chaleco", "cortavientos", "premium"],
+        "proteccion": ["cortavientos", "resistente al agua"],
+        "peso": ["ultraligero"],
+        "plegable": ["sí"],
+        "ocasion": ["entrenamiento", "días variables", "montaña", "descensos"],
+        "temporada": ["primavera", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 30,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot Mujer M2 Pinerolo",
+      "description": "Maillot de manga corta para mujer con tecnología Breathlock+ y corte Race Slim Fit adaptado a la anatomía femenina. Tejido ultraligero y transpirable, cremallera corta frontal y tres bolsillos traseros. Disponible en colores suaves con detalles florales.",
+      "price": { "amount": 4400, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco", "rosa", "verde agua"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["maillot manga corta", "mujer"],
+        "ajuste": ["race slim fit"],
+        "tecnologia": ["Breathlock+"],
+        "ocasion": ["entrenamiento", "competición", "salidas en carretera"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["mujer"]
+      },
+      "stock": 65,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote Largo Mujer SRX Pro Aero Race",
+      "description": "Culote largo premium para mujer con el mejor rendimiento en rutas profesionales. Acolchado Strato++ y Elastic Interface® diseñado específicamente para la anatomía femenina. Tejido de alta compresión con paneles aerodinámicos Arrowind™. El culote más avanzado de la gama femenina.",
+      "price": { "amount": 14995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["Arrowind™", "nylon", "elastán"],
+        "tipo": ["culote largo", "mujer", "premium"],
+        "acolchado": ["Strato++", "Elastic Interface®"],
+        "ajuste": ["alta compresión", "aerodinámico"],
+        "tecnologia": ["UPF 50"],
+        "ocasion": ["competición", "gran fondo", "salidas muy largas"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["mujer"]
+      },
+      "stock": 25,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Gafas K3 Tech MTB",
+      "description": "Gafas de sol deportivas ultraligeras (27g) de montura PC con lentes intercambiables. Perfectas para ciclismo de montaña y trail running. Incluye lentes fotocromáticas, polarizadas TAC 1.2 y funda protectora. Protección UV400. Patillas ajustables para casco.",
+      "price": { "amount": 9000, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "blanco", "rojo"],
+        "material": ["PC", "TAC"],
+        "tipo": ["gafas", "gafas de sol deportivas", "MTB"],
+        "lentes": ["intercambiables", "fotocromáticas", "polarizadas"],
+        "peso": ["27g", "ultraligeras"],
+        "proteccion": ["UV400"],
+        "deporte": ["MTB", "ciclismo de montaña", "trail running", "gravel"],
+        "ocasion": ["montaña", "trail", "deporte de alta intensidad"],
+        "genero": ["unisex"]
+      },
+      "stock": 60,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Gafas K3 The Cyclist",
+      "description": "Gafas de ciclismo en carretera con diseño envolvente y máxima ventilación. Lentes intercambiables para distintas condiciones lumínicas. Montura de nylon ligera y resistente. La opción más popular entre los ciclistas de carretera de la gama K3.",
+      "price": { "amount": 9000, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "azul", "transparente"],
+        "material": ["nylon", "PC"],
+        "tipo": ["gafas", "gafas de sol deportivas", "carretera"],
+        "lentes": ["intercambiables"],
+        "proteccion": ["UV400"],
+        "deporte": ["ciclismo carretera", "triatlón"],
+        "ocasion": ["carretera", "entrenamiento", "competición"],
+        "genero": ["unisex"]
+      },
+      "stock": 55,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Casco HE Circuit con MIPS",
+      "description": "Casco de ciclismo en carretera con sistema de seguridad MIPS® para protección ante impactos angulares. Diseño aerodinámico con amplia ventilación. Sistema de ajuste preciso Rollsys. Certificación CE EN 1078. Compatible con la mayoría de gafas de ciclismo.",
+      "price": { "amount": 10995, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris", "blanco"],
+        "talla": ["S/M", "L/XL"],
+        "material": ["EPS", "policarbonato"],
+        "tipo": ["casco", "casco carretera"],
+        "seguridad": ["MIPS®", "CE EN 1078"],
+        "ventilacion": ["alta"],
+        "ajuste": ["Rollsys"],
+        "deporte": ["ciclismo carretera", "cicloturismo"],
+        "ocasion": ["entrenamiento", "competición", "uso diario"],
+        "genero": ["unisex"]
+      },
+      "stock": 40,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Zapatillas Infinity Road",
+      "description": "Zapatillas de ciclismo en carretera de suela de carbono para máxima eficiencia en la pedalada. Sistema de cierre BOA® de precisión. Horma anatómica compatible con calas SPD-SL y Look Keo. Ventilación optimizada para salidas largas en verano.",
+      "price": { "amount": 12800, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco", "negro"],
+        "talla": ["38", "39", "40", "41", "42", "43", "44", "45", "46"],
+        "material": ["carbono", "malla"],
+        "tipo": ["zapatillas ciclismo", "carretera"],
+        "suela": ["carbono"],
+        "cierre": ["BOA®"],
+        "compatibilidad": ["SPD-SL", "Look Keo"],
+        "ventilacion": ["alta"],
+        "deporte": ["ciclismo carretera", "triatlón"],
+        "ocasion": ["entrenamiento", "competición"],
+        "genero": ["hombre"]
+      },
+      "stock": 30,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Calcetines S1 Burgundy",
+      "description": "Calcetines de ciclismo de caña alta con compresión graduada. Tejido de poliamida y elastán con zona de amortiguación en planta y talón. Altura 20 cm. Grip antideslizante en la planta. Colores vivos para destacar en el pelotón.",
+      "price": { "amount": 1995, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["burdeos", "rojo", "granate"],
+        "talla": ["S (36-39)", "M (40-43)", "L (44-46)"],
+        "material": ["poliamida", "elastán"],
+        "tipo": ["calcetines", "calcetines ciclismo"],
+        "altura": ["caña alta", "20cm"],
+        "compresion": ["graduada"],
+        "deporte": ["ciclismo carretera", "triatlón"],
+        "ocasion": ["entrenamiento", "competición"],
+        "genero": ["unisex"]
+      },
+      "stock": 120,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Calcetines SRX Maloja Premium",
+      "description": "Calcetines de ciclismo premium con tejido Merino y fibras técnicas. Compresión graduada y refuerzo en zonas de mayor desgaste. El calcetín de referencia para ciclistas que buscan comodidad en salidas largas. Caña alta de 20 cm.",
+      "price": { "amount": 2995, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["gris", "plata"],
+        "talla": ["S (36-39)", "M (40-43)", "L (44-46)"],
+        "material": ["merino", "poliamida", "elastán"],
+        "tipo": ["calcetines", "calcetines ciclismo", "premium"],
+        "altura": ["caña alta", "20cm"],
+        "compresion": ["graduada"],
+        "deporte": ["ciclismo carretera", "gran fondo"],
+        "ocasion": ["salidas largas", "competición"],
+        "genero": ["unisex"]
+      },
+      "stock": 90,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Guantes Core Hekla Invierno",
+      "description": "Guantes de ciclismo de invierno con relleno térmico y membrana resistente al agua. Pantalla táctil en índice y pulgar para uso del smartphone. Sistema de velcro en muñeca para ajuste preciso. Palma con gel amortiguador en zonas de presión. Para temperaturas entre 0°C y 8°C.",
+      "price": { "amount": 4495, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["S", "M", "L", "XL"],
+        "material": ["neopreno", "poliéster térmico"],
+        "tipo": ["guantes", "guantes ciclismo", "invierno"],
+        "proteccion": ["resistente al agua", "térmico"],
+        "temperatura": ["0-8°C"],
+        "pantalla_tactil": ["sí"],
+        "deporte": ["ciclismo invierno"],
+        "ocasion": ["invierno", "frio intenso"],
+        "temporada": ["invierno", "otoño"],
+        "genero": ["unisex"]
+      },
+      "stock": 45,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot Bio Nomad Cross Biodegradable",
+      "description": "Maillot de ciclismo sostenible fabricado con tejido biodegradable GREENONE® reciclado de la marca MITI. El mismo rendimiento técnico Siroko con mínimo impacto ambiental. Transpirable, ligero y con corte Race Fit. El maillot para ciclistas con conciencia medioambiental.",
+      "price": { "amount": 7995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["azul", "verde"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["GREENONE® biodegradable", "poliéster reciclado"],
+        "tipo": ["maillot manga corta", "sostenible", "eco"],
+        "sostenibilidad": ["biodegradable", "reciclado", "eco-friendly"],
+        "ajuste": ["race fit"],
+        "tecnologia": ["Breathlock+"],
+        "ocasion": ["entrenamiento", "cicloturismo"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["hombre"]
+      },
+      "stock": 35,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote Corto Mortirolo",
+      "description": "Culote de ciclismo para iniciación y salidas de hasta 3 horas. Acolchado Strato de alta densidad con banda de silicona en las piernas. Tirantes ultraligeros con banda elástica ventilada. La opción de entrada a la gama Siroko sin renunciar a la calidad.",
+      "price": { "amount": 4195, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["culote corto", "iniciación"],
+        "acolchado": ["Strato"],
+        "horas_uso": ["hasta 3 horas"],
+        "ajuste": ["regular fit"],
+        "ocasion": ["entrenamiento", "salidas cortas", "iniciación al ciclismo"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["hombre"]
+      },
+      "stock": 100,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Leggings Tenaz Workout",
+      "description": "Leggings de entrenamiento de alta sujeción para fitness, gym y running. Tejido de compresión media con tecnología 4-way stretch para máxima libertad de movimiento. Cinturilla alta con bolsillo interior para móvil. Costuras planas para evitar roces. Adecuados para entrenamiento de fuerza y cardio.",
+      "price": { "amount": 6495, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["gris", "negro"],
+        "talla": ["XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán", "lycra"],
+        "tipo": ["leggings", "mallas fitness"],
+        "ajuste": ["compresión media", "cinturilla alta"],
+        "bolsillo": ["interior para móvil"],
+        "estiramiento": ["4-way stretch"],
+        "deporte": ["fitness", "gym", "running", "yoga", "entrenamiento funcional"],
+        "ocasion": ["gym", "entrenamiento", "clase dirigida"],
+        "temporada": ["todo el año"],
+        "genero": ["mujer"]
+      },
+      "stock": 75,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Leggings Deportivos Hombre",
+      "description": "Mallas deportivas masculinas de compresión para entrenamiento en gym y running. Tejido transpirable con panel de malla en zonas de mayor sudoración. Cinturilla elástica con cordón. Diseño streamline para reducir la resistencia aerodinámica. Disponible en negro y gris.",
+      "price": { "amount": 6495, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris"],
+        "talla": ["XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["leggings", "mallas deportivas", "hombre"],
+        "ajuste": ["compresión", "streamline"],
+        "deporte": ["gym", "running", "fitness", "ciclismo indoor"],
+        "ocasion": ["gym", "entrenamiento", "running"],
+        "temporada": ["todo el año"],
+        "genero": ["hombre"]
+      },
+      "stock": 60,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Camiseta Volt Sin Mangas Running",
+      "description": "Camiseta sin mangas técnica para running y entrenamiento. Tejido ultraligero con textura de malla para máxima ventilación. Corte holgado que favorece la libertad de movimiento. Sin costuras laterales para evitar roces durante la carrera. Tratamiento antibacteriano.",
+      "price": { "amount": 2999, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "azul", "blanco"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "malla"],
+        "tipo": ["camiseta sin mangas", "técnica"],
+        "ajuste": ["holgado"],
+        "tratamiento": ["antibacteriano"],
+        "costuras": ["sin costuras laterales"],
+        "deporte": ["running", "gym", "fitness", "trail running"],
+        "ocasion": ["entrenamiento", "carrera", "gym"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["hombre"]
+      },
+      "stock": 90,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Pantalón Corto Alloy Running",
+      "description": "Short de running ligero con forro interior de malla. Bolsillos laterales con cremallera. Cinturilla elástica con cordón de ajuste. Tela ultraligera de secado rápido. Ideal para entrenamiento de intervalos, carrera continua y competición en pista.",
+      "price": { "amount": 3999, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "azul marino", "gris"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "nylon"],
+        "tipo": ["short", "pantalón corto running"],
+        "forro": ["malla interior"],
+        "bolsillos": ["laterales con cremallera"],
+        "deporte": ["running", "trail running", "fitness"],
+        "ocasion": ["carrera", "entrenamiento", "competición"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["hombre"]
+      },
+      "stock": 80,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Chaqueta Alia Running",
+      "description": "Chaqueta de running ligera cortavientos con capucha plegable en el cuello. Tejido resistente al viento y ligeras lluvias. Reflectantes de seguridad en parte trasera y mangas. Se pliega en el bolsillo interior hasta el tamaño de un puño. Ideal para salidas de entrenamiento en días inestables.",
+      "price": { "amount": 5999, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["azul", "negro", "verde"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster ripstop"],
+        "tipo": ["chaqueta running", "cortavientos"],
+        "capucha": ["plegable"],
+        "plegable": ["sí"],
+        "reflectantes": ["sí"],
+        "proteccion": ["cortavientos", "resistente al agua ligera"],
+        "deporte": ["running", "trail running"],
+        "ocasion": ["días de lluvia", "entrenamiento exterior", "otoño"],
+        "temporada": ["primavera", "otoño"],
+        "genero": ["mujer"]
+      },
+      "stock": 50,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Camiseta Stoneway Manga Larga Lifestyle",
+      "description": "Camiseta de manga larga de uso diario fabricada en algodón orgánico de alta calidad. Corte relajado con pequeño logo Siroko bordado en el pecho. Cuello redondo cómodo. Perfecta para uso casual y post-entrenamiento. El equilibrio entre el estilo deportivo y el día a día.",
+      "price": { "amount": 8999, "currency": "EUR" },
+      "category": "APPAREL",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris marengo", "blanco roto", "azul marino"],
+        "talla": ["S", "M", "L", "XL", "2XL"],
+        "material": ["algodón orgánico"],
+        "tipo": ["camiseta manga larga", "lifestyle"],
+        "ajuste": ["regular fit", "relajado"],
+        "uso": ["casual", "post-entrenamiento", "lifestyle"],
+        "estilo": ["minimalista", "deportivo casual", "everyday"],
+        "ocasion": ["uso diario", "casual", "viaje"],
+        "temporada": ["otoño", "invierno", "primavera"],
+        "genero": ["hombre"]
+      },
+      "stock": 70,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Sudadera Crew Neck Lifestyle",
+      "description": "Sudadera cuello redondo de algodón premium con pequeño logo Siroko bordado. Tejido de felpa interior suave y cálido. Corte relajado con bajos y mangas en canalé. La sudadera de referencia para el uso casual del deportista que también cuida su estilo fuera del deporte.",
+      "price": { "amount": 4495, "currency": "EUR" },
+      "category": "APPAREL",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["gris", "negro", "azul marino", "beige"],
+        "talla": ["S", "M", "L", "XL", "2XL"],
+        "material": ["algodón", "poliéster"],
+        "tipo": ["sudadera", "crew neck"],
+        "ajuste": ["regular fit", "relajado"],
+        "interior": ["felpa"],
+        "estilo": ["casual", "minimalista", "athleisure"],
+        "uso": ["casual", "lifestyle", "post-entrenamiento", "descanso"],
+        "ocasion": ["uso diario", "fin de semana", "viaje"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["unisex"]
+      },
+      "stock": 85,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Gorra Mavericks 5 Paneles",
+      "description": "Gorra de 5 paneles con visera plana y ajuste snapback trasero. Bordado del logo Siroko en la parte frontal. Tela de algodón estructurada. Diseño urbano inspirado en la cultura deportiva. Compatible con uso diario y actividades outdoor.",
+      "price": { "amount": 4495, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris", "blanco", "azul"],
+        "talla": ["única (ajustable)"],
+        "material": ["algodón"],
+        "tipo": ["gorra", "5 paneles", "snapback"],
+        "visera": ["plana"],
+        "ajuste": ["snapback"],
+        "estilo": ["urbano", "streetwear", "deportivo casual"],
+        "uso": ["casual", "outdoor", "lifestyle"],
+        "ocasion": ["uso diario", "deporte casual", "urbano"],
+        "temporada": ["todo el año"],
+        "genero": ["unisex"]
+      },
+      "stock": 100,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Pack Calcetines Running Tobilleros x3",
+      "description": "Pack de 3 pares de calcetines técnicos de running con altura tobillera. Tejido de poliamida con compresión ligera y refuerzo en talón y puntera. Acolchado en planta para absorción de impactos. Sin costuras en los dedos para mayor comodidad en carrera.",
+      "price": { "amount": 4495, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco", "negro", "gris"],
+        "talla": ["S (35-38)", "M (39-42)", "L (43-46)"],
+        "material": ["poliamida", "elastán"],
+        "tipo": ["calcetines running", "tobilleros", "pack x3"],
+        "altura": ["tobillero"],
+        "acolchado": ["planta"],
+        "costuras": ["sin costuras en dedos"],
+        "deporte": ["running", "fitness", "gym"],
+        "ocasion": ["carrera", "entrenamiento", "gym"],
+        "temporada": ["todo el año"],
+        "genero": ["unisex"]
+      },
+      "stock": 150,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Chaleco Hidratación Rayne Trail",
+      "description": "Chaleco de hidratación para trail running y mountain running. Capacidad de 5L con reserva de agua de 1.5L incluida. Sistema de ajuste rápido en pecho y cintura. Bolsillos frontales para geles y móvil. Compatible con bastones de trail. Peso ultraligero de 180g.",
+      "price": { "amount": 3999, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["azul", "negro", "coral"],
+        "talla": ["XS-S", "M-L", "XL-2XL"],
+        "material": ["nylon ripstop", "malla"],
+        "tipo": ["chaleco hidratación", "mochila running"],
+        "capacidad": ["5L"],
+        "reserva_agua": ["1.5L incluida"],
+        "peso": ["180g", "ultraligero"],
+        "bolsillos": ["frontales para geles", "móvil"],
+        "deporte": ["trail running", "mountain running", "ultra trail"],
+        "ocasion": ["trail", "montaña", "competición trail"],
+        "genero": ["unisex"]
+      },
+      "stock": 40,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot M2 Yorkshire",
+      "description": "Maillot de manga corta de edición especial con diseño oscuro y detalles amarillos fluorescentes. Tejido Breathlock+ ultraligero con corte Race Slim Fit. Cremallera Full Hidden antirroces, tres bolsillos traseros y reflectante de seguridad. Para ciclistas que buscan presencia en el pelotón.",
+      "price": { "amount": 5900, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "amarillo"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["maillot manga corta"],
+        "ajuste": ["race slim fit"],
+        "tecnologia": ["Breathlock+", "UPF 50", "Full Hidden"],
+        "ocasion": ["entrenamiento", "competición", "salidas en carretera"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 65,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot M2 Aconcagua Mujer",
+      "description": "Maillot de manga corta para mujer en tonos lavanda y violeta. Tejido Breathlock+ adaptado a la anatomía femenina con corte Race Slim Fit. Cremallera frontal corta, tres bolsillos traseros y detalle reflectante. Elegante y técnico para salidas en carretera en primavera y verano.",
+      "price": { "amount": 5995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["violeta", "lavanda"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["maillot manga corta", "mujer"],
+        "ajuste": ["race slim fit"],
+        "tecnologia": ["Breathlock+", "UPF 50"],
+        "ocasion": ["entrenamiento", "competición", "salidas en carretera"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["mujer"]
+      },
+      "stock": 50,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot M4 Granfondo Manga Larga",
+      "description": "Maillot de manga larga pensado para cicloturismo y gran fondo en condiciones frescas. Tejido Breathlock+ con acabado cepillado interior para mayor confort. Cuatro bolsillos traseros con cierre, uno con cremallera impermeable para documentos. Ideal para jornadas de larga duración en primavera y otoño.",
+      "price": { "amount": 6995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco", "gris"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["maillot manga larga"],
+        "ajuste": ["regular fit"],
+        "tecnologia": ["Breathlock+", "UPF 50"],
+        "ocasion": ["gran fondo", "cicloturismo", "rutas largas"],
+        "temporada": ["primavera", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 45,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Maillot M8 VIBZ MTB Tarida",
+      "description": "Maillot de MTB de manga corta diseñado específicamente para mountain bike y trail. Tejido mesh ultraligero de secado ultrarrápido con costuras invisibles para máxima comodidad en posición MTB. Pequeño bolsillo trasero con cremallera. Diseño técnico y colorido inspirado en la competición.",
+      "price": { "amount": 6995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["verde", "naranja", "púrpura"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["mesh poliéster", "elastán"],
+        "tipo": ["maillot manga corta", "MTB"],
+        "ajuste": ["regular fit"],
+        "tecnologia": ["mesh ultraligero", "UPF 50"],
+        "deporte": ["MTB", "mountain bike", "gravel", "trail"],
+        "ocasion": ["MTB", "ciclismo de montaña", "gravel", "trail"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["unisex"]
+      },
+      "stock": 55,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote BX Strada Mujer",
+      "description": "Culote de ciclismo para mujer con badana Strato+ de Recticel belga de múltiples densidades. Diseñado para salidas exigentes de 8 a 10 horas. Tejido de poliéster de secado rápido con protección UPF 50. Bolsillo Snackback integrado en el tirante y detalles reflectantes de seguridad.",
+      "price": { "amount": 7995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "lavanda"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["culote corto", "mujer"],
+        "acolchado": ["Strato+"],
+        "horas_uso": ["8-10 horas"],
+        "tecnologia": ["UPF 50"],
+        "ocasion": ["entrenamiento", "salidas largas", "cicloturismo"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["mujer"]
+      },
+      "stock": 60,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote BX Trento Largo Mujer",
+      "description": "Culote largo térmico para mujer con badana Strato+ de Recticel belga. Paneles cortavientos en espinillas y zona frontal de muslos. Tejido con aislamiento térmico en la cara interior para temperaturas entre 5°C y 12°C. Protección UPF 50 y detalles reflectantes. La mejor opción para el invierno en mujer.",
+      "price": { "amount": 9995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "nylon", "elastán"],
+        "tipo": ["culote largo", "térmico", "mujer"],
+        "acolchado": ["Strato+"],
+        "proteccion": ["cortavientos", "térmico"],
+        "temperatura": ["5-12°C"],
+        "tecnologia": ["UPF 50"],
+        "ocasion": ["entrenamiento invierno", "salidas frías"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["mujer"]
+      },
+      "stock": 35,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote BX Squadra",
+      "description": "Culote de ciclismo para hombre de la gama BX con badana Strato+ de Recticel belga de múltiples densidades. Tejido de poliéster de secado rápido con protección UPF 50 y detalles reflectantes. Para salidas exigentes de 8 a 10 horas. La alternativa de alta calidad a precios asequibles.",
+      "price": { "amount": 6899, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["culote corto"],
+        "acolchado": ["Strato+"],
+        "horas_uso": ["8-10 horas"],
+        "tecnologia": ["UPF 50"],
+        "ocasion": ["entrenamiento", "salidas largas", "fondo"],
+        "temporada": ["primavera", "verano", "otoño"],
+        "genero": ["hombre"]
+      },
+      "stock": 70,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote BX Envalira Largo",
+      "description": "Culote largo térmico para hombre con paneles cortavientos en espinillas, muslos y zona lumbar. Badana Strato+ de Recticel belga. Tejido con aislamiento térmico extraordinario en cara interior. Para salidas de otoño e invierno entre 5°C y 12°C. El culote de invierno imprescindible.",
+      "price": { "amount": 9299, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster", "nylon", "elastán"],
+        "tipo": ["culote largo", "térmico"],
+        "acolchado": ["Strato+"],
+        "proteccion": ["cortavientos", "térmico"],
+        "temperatura": ["5-12°C"],
+        "tecnologia": ["UPF 50"],
+        "ocasion": ["entrenamiento invierno", "salidas frías", "otoño"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["hombre"]
+      },
+      "stock": 40,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Culote SRX Pro Premier Largo Mujer",
+      "description": "Culote largo premium para mujer con badana Strato++ y tecnología Elastic Interface®. Tejido italiano M.I.T.I. Thermoroubaix® con tratamiento DWR resistente al agua. El culote de invierno más avanzado de la gama femenina para salidas de gran fondo en condiciones frías.",
+      "price": { "amount": 12995, "currency": "EUR" },
+      "category": "CYCLING",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["2XS", "XS", "S", "M", "L", "XL"],
+        "material": ["Thermoroubaix® MITI", "poliéster", "elastán"],
+        "tipo": ["culote largo", "premium", "mujer"],
+        "acolchado": ["Strato++", "Elastic Interface®"],
+        "ajuste": ["alta compresión"],
+        "proteccion": ["cortavientos", "DWR", "térmico"],
+        "tecnologia": ["UPF 50", "Thermoroubaix®"],
+        "horas_uso": ["10-12 horas"],
+        "ocasion": ["competición invierno", "gran fondo", "salidas muy largas"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["mujer"]
+      },
+      "stock": 20,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Gafas K3 Criterium",
+      "description": "Gafas de ciclismo en carretera orientadas a la competición. Montura PC ultraligera de 27g con diseño envolvente de alto cubrimiento. Lentes polarizadas Special TAC 1.2 intercambiables con capa REVO. Protección UV400 total. Sistema de ventilación DrySky+ para visibilidad óptima en esfuerzo.",
+      "price": { "amount": 3490, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris"],
+        "material": ["policarbonato", "TAC 1.2"],
+        "tipo": ["gafas ciclismo", "competición"],
+        "lentes": ["polarizadas", "intercambiables", "REVO"],
+        "peso": ["27g", "ultraligeras"],
+        "proteccion": ["UV400"],
+        "deporte": ["ciclismo carretera", "triatlón", "competición"],
+        "ocasion": ["competición", "entrenamiento carretera"],
+        "genero": ["unisex"]
+      },
+      "stock": 50,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Gafas K3s Photochromic Grey",
+      "description": "Gafas fotocromáticas para ciclismo y running con montura PC de 26g. Las lentes panorámicas se adaptan automáticamente de categoría 2 a 3 en menos de 60 segundos según las condiciones lumínicas. Sistema anti-vaho DrySky y cobertura REVO. Ideales para entrenos de duración variable.",
+      "price": { "amount": 4995, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["gris"],
+        "material": ["policarbonato", "TAC 1.2 fotocromática"],
+        "tipo": ["gafas fotocromáticas"],
+        "lentes": ["fotocromáticas", "anti-vaho", "REVO"],
+        "peso": ["26g", "ultraligeras"],
+        "proteccion": ["UV400"],
+        "deporte": ["ciclismo carretera", "gravel", "running", "trail"],
+        "ocasion": ["entrenamiento", "condiciones cambiantes", "amanecer", "atardecer"],
+        "temporada": ["todo el año"],
+        "genero": ["unisex"]
+      },
+      "stock": 45,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Guantes Nuremberg Verano Ciclismo",
+      "description": "Guantes de ciclismo de verano sin dedos con dorso de poliéster y elastán transpirable. Palma de cuero sintético reforzado con relleno de gel en zonas de presión. Cierre de velcro en muñeca. Lengueta de fácil puesta y retirada. Para temperaturas superiores a 15°C.",
+      "price": { "amount": 2990, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "azul"],
+        "talla": ["S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán", "cuero sintético"],
+        "tipo": ["guantes ciclismo", "verano", "sin dedos"],
+        "proteccion": ["transpirable", "gel amortiguador"],
+        "temperatura": ["15°C+"],
+        "deporte": ["ciclismo carretera", "MTB", "gravel"],
+        "ocasion": ["entrenamiento", "salidas verano", "primavera"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["unisex"]
+      },
+      "stock": 80,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Guantes Vestkapp Invierno",
+      "description": "Guantes de invierno para ciclismo con forro de fleece interior y membrana impermeable. Palma de cuero sintético con refuerzo de silicona para agarre perfecto en mojado. Puños de neopreno sellados contra la entrada de agua. Detalles reflectantes en el dorso. Para temperaturas entre 0°C y 5°C.",
+      "price": { "amount": 3990, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["S", "M", "L", "XL"],
+        "material": ["poliéster", "neopreno", "fleece"],
+        "tipo": ["guantes ciclismo", "invierno", "impermeables"],
+        "proteccion": ["impermeable", "térmico", "fleece"],
+        "temperatura": ["0-5°C"],
+        "deporte": ["ciclismo invierno"],
+        "ocasion": ["invierno", "frío extremo", "lluvia"],
+        "temporada": ["invierno"],
+        "genero": ["unisex"]
+      },
+      "stock": 50,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Calcetines S1 Ancares Azul",
+      "description": "Calcetines de ciclismo de caña media para temperaturas de 15°C a 25°C. Tejido de poliamida y elastán con banda de arco elástico y talón en forma de Y para ajuste perfecto. Compresión graduada para activar la circulación. Diseño en azul marino elegante para el pelotón.",
+      "price": { "amount": 1295, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["azul marino"],
+        "talla": ["S (36-39)", "M (40-43)", "L (44-46)"],
+        "material": ["poliamida", "elastán"],
+        "tipo": ["calcetines ciclismo"],
+        "altura": ["caña media"],
+        "compresion": ["graduada"],
+        "temperatura": ["15-25°C"],
+        "deporte": ["ciclismo carretera", "cicloturismo"],
+        "ocasion": ["entrenamiento", "salidas"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["unisex"]
+      },
+      "stock": 110,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Manguitos Térmicos M2",
+      "description": "Manguitos de ciclismo en tejido Breathlock+ térmico cepillado para ampliar el uso de los maillots de manga corta en días frescos. Silicona antideslizante en el borde superior para sujeción perfecta. Se guardan cómodamente en el bolsillo trasero del maillot. Compatibles con cualquier maillot de la gama M2.",
+      "price": { "amount": 2995, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro"],
+        "talla": ["S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["manguitos ciclismo", "accesorios"],
+        "tecnologia": ["Breathlock+", "silicona antideslizante"],
+        "proteccion": ["térmico", "cortavientos ligero"],
+        "ocasion": ["días frescos", "transición primavera"],
+        "temporada": ["primavera", "otoño"],
+        "genero": ["unisex"]
+      },
+      "stock": 90,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Casco HE Trail MTB MIPS",
+      "description": "Casco de MTB y trail running con sistema MIPS® para máxima protección ante impactos angulares. Visera ajustable integrada. Amplia ventilación con 20 orificios de ventilación para máximo flujo de aire. Sistema de ajuste Rollsys de precisión. Certificación CE EN 1078 y CPSC. Ligero y resistente.",
+      "price": { "amount": 8999, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "gris", "verde"],
+        "talla": ["S/M", "L/XL"],
+        "material": ["EPS", "policarbonato"],
+        "tipo": ["casco MTB", "casco trail"],
+        "seguridad": ["MIPS®", "CE EN 1078", "CPSC"],
+        "ventilacion": ["alta", "20 orificios"],
+        "ajuste": ["Rollsys"],
+        "deporte": ["MTB", "trail running", "gravel"],
+        "ocasion": ["montaña", "trail", "off-road"],
+        "genero": ["unisex"]
+      },
+      "stock": 35,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Zapatillas SX200 MTB",
+      "description": "Zapatillas de MTB con suela de goma de agarre extremo Vibram® para máximo control en terrenos técnicos. Sistema de cierre BOA® de precisión con cable de acero inoxidable. Compatible con calas SPD de dos tornillos. Puntera reforzada para protección extra en descensos. Peso: 380g (talla 42).",
+      "price": { "amount": 10900, "currency": "EUR" },
+      "category": "ACCESSORIES",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "naranja"],
+        "talla": ["38", "39", "40", "41", "42", "43", "44", "45", "46"],
+        "material": ["nylon", "goma Vibram®"],
+        "tipo": ["zapatillas MTB", "zapatillas ciclismo"],
+        "suela": ["Vibram®", "goma agarre extremo"],
+        "cierre": ["BOA®"],
+        "compatibilidad": ["SPD dos tornillos"],
+        "proteccion": ["puntera reforzada"],
+        "deporte": ["MTB", "ciclismo de montaña", "gravel"],
+        "ocasion": ["montaña", "trail", "enduro", "cross-country"],
+        "genero": ["hombre"]
+      },
+      "stock": 25,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Sujetador Deportivo High Support",
+      "description": "Sujetador deportivo de alta sujeción para running e impacto alto. Aros de soporte anatómicos con copas moldeadas sin costuras. Banda inferior ancha para máxima estabilidad. Tirantes anchos ajustables con apertura trasera de cremallera. Tejido de secado rápido con tratamiento antibacteriano.",
+      "price": { "amount": 4999, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "coral", "azul"],
+        "talla": ["XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["sujetador deportivo", "bra deportivo", "alta sujeción"],
+        "ajuste": ["alta compresión", "cinturilla alta"],
+        "tratamiento": ["antibacteriano"],
+        "deporte": ["running", "fitness", "gym", "hiit", "crossfit"],
+        "ocasion": ["entrenamiento intensivo", "carrera", "gym"],
+        "temporada": ["todo el año"],
+        "genero": ["mujer"]
+      },
+      "stock": 85,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Top Running Sin Mangas Mujer",
+      "description": "Top técnico sin mangas para running y fitness femenino. Tejido ultraligero de malla transpirable con soporte integrado de baja sujeción. Espalda nadadora para máxima libertad de movimiento. Sin costuras laterales. Fit ajustado y moderno para el entreno del día a día.",
+      "price": { "amount": 2799, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["rosa", "negro", "blanco", "verde agua"],
+        "talla": ["XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "malla"],
+        "tipo": ["top deportivo", "sin mangas", "mujer"],
+        "ajuste": ["slim fit"],
+        "costuras": ["sin costuras laterales"],
+        "deporte": ["running", "yoga", "fitness", "gym"],
+        "ocasion": ["gym", "entrenamiento", "clase dirigida"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["mujer"]
+      },
+      "stock": 95,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Pantalón Corto Running Mujer",
+      "description": "Short de running femenino ultraligero con cinturilla alta y forro interior de malla. Bolsillo trasero con cremallera para el móvil o llaves. Tejido de secado ultrarrápido con tecnología 4-way stretch. Corte que favorece la libertad de movimiento en zancada larga. Disponible en colores vibrantes.",
+      "price": { "amount": 3499, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "rosa", "coral", "azul"],
+        "talla": ["XS", "S", "M", "L", "XL"],
+        "material": ["poliéster", "elastán"],
+        "tipo": ["short running", "pantalón corto", "mujer"],
+        "ajuste": ["cinturilla alta"],
+        "forro": ["malla interior"],
+        "bolsillos": ["trasero con cremallera"],
+        "estiramiento": ["4-way stretch"],
+        "deporte": ["running", "trail running", "fitness"],
+        "ocasion": ["carrera", "entrenamiento", "competición"],
+        "temporada": ["primavera", "verano"],
+        "genero": ["mujer"]
+      },
+      "stock": 75,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Camiseta Running Manga Larga Hombre",
+      "description": "Camiseta técnica de manga larga para running en condiciones frescas. Tejido de poliéster transpirable y de secado rápido con tratamiento reflectante en mangas. Puños con orificio para los pulgares. Sin costuras en los hombros. Ligera y ajustada para minimizar la resistencia en carrera.",
+      "price": { "amount": 3499, "currency": "EUR" },
+      "category": "FITNESS",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "azul marino", "gris"],
+        "talla": ["XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["poliéster"],
+        "tipo": ["camiseta manga larga", "técnica", "running"],
+        "ajuste": ["slim fit"],
+        "reflectantes": ["sí"],
+        "deporte": ["running", "trail running", "fitness"],
+        "ocasion": ["entrenamiento otoño", "running frío", "madrugadas"],
+        "temporada": ["primavera", "otoño", "invierno suave"],
+        "genero": ["hombre"]
+      },
+      "stock": 70,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Sudadera Splash con Capucha",
+      "description": "Sudadera con capucha de algodón y poliéster para uso casual y post-entrenamiento. Bolsillo tipo canguro delantero. Capucha con cordón ajustable. Puños y bajo en canalé elástico. Logo Siroko bordado en el pecho. Tono azul eléctrico llamativo para destacar fuera del deporte.",
+      "price": { "amount": 12495, "currency": "EUR" },
+      "category": "APPAREL",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["azul eléctrico", "negro", "gris"],
+        "talla": ["XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["algodón", "poliéster"],
+        "tipo": ["sudadera", "hoodie", "con capucha"],
+        "ajuste": ["regular fit"],
+        "estilo": ["athleisure", "casual", "urbano"],
+        "uso": ["casual", "post-entrenamiento", "lifestyle"],
+        "ocasion": ["uso diario", "fin de semana", "deporte casual"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["hombre"]
+      },
+      "stock": 55,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Sudadera Fleece Avoriaz Mujer",
+      "description": "Sudadera de fleece para mujer con capucha y bolsillo tipo canguro con cremalleras laterales de acceso. Tejido de polar suave y cálido, ligero pero con excelente aislamiento térmico. Diseño cómodo y funcional para el día a día y actividades al aire libre en otoño e invierno.",
+      "price": { "amount": 12995, "currency": "EUR" },
+      "category": "APPAREL",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["negro", "burdeos", "verde musgo"],
+        "talla": ["XS", "S", "M", "L", "XL"],
+        "material": ["polar fleece", "poliéster"],
+        "tipo": ["sudadera fleece", "hoodie", "mujer"],
+        "ajuste": ["regular fit", "relajado"],
+        "interior": ["fleece"],
+        "estilo": ["casual", "outdoor", "athleisure"],
+        "uso": ["casual", "outdoor", "lifestyle", "descanso"],
+        "ocasion": ["uso diario", "senderismo casual", "fin de semana"],
+        "temporada": ["otoño", "invierno"],
+        "genero": ["mujer"]
+      },
+      "stock": 60,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Camiseta Lifestyle Manga Corta Hombre",
+      "description": "Camiseta de algodón orgánico de manga corta con ajuste regular y cuello redondo. Logo Siroko estampado en el pecho. Tela suave y transpirable, perfecta para el uso diario o como prenda de post-entreno. Disponible en colores neutros y básicos que combinan con todo.",
+      "price": { "amount": 4995, "currency": "EUR" },
+      "category": "APPAREL",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco", "negro", "gris", "azul marino", "verde caqui"],
+        "talla": ["XS", "S", "M", "L", "XL", "2XL"],
+        "material": ["algodón orgánico"],
+        "tipo": ["camiseta manga corta", "lifestyle"],
+        "ajuste": ["regular fit"],
+        "estilo": ["casual", "minimalista", "everyday"],
+        "uso": ["casual", "lifestyle", "post-entrenamiento"],
+        "ocasion": ["uso diario", "casual", "viaje"],
+        "temporada": ["todo el año"],
+        "genero": ["hombre"]
+      },
+      "stock": 120,
+      "imageUrl": null
+    },
+
+    {
+      "name": "Camiseta Lifestyle Mujer",
+      "description": "Camiseta de algodón orgánico para mujer con corte holgado y cuello redondo. Logo Siroko bordado discretamente en el pecho. Perfecta para uso diario, yoga casual o post-entrenamiento. Disponible en colores suaves y tendencia que combinan con cualquier look deportivo.",
+      "price": { "amount": 4995, "currency": "EUR" },
+      "category": "APPAREL",
+      "brand": "Siroko",
+      "attributes": {
+        "color": ["blanco roto", "rosa palo", "beige", "gris claro", "verde agua"],
+        "talla": ["XS", "S", "M", "L", "XL"],
+        "material": ["algodón orgánico"],
+        "tipo": ["camiseta manga corta", "lifestyle", "mujer"],
+        "ajuste": ["holgado", "oversized"],
+        "estilo": ["casual", "minimalista", "athleisure"],
+        "uso": ["casual", "lifestyle", "post-entrenamiento", "descanso"],
+        "ocasion": ["uso diario", "casual", "viaje"],
+        "temporada": ["todo el año"],
+        "genero": ["mujer"]
+      },
+      "stock": 110,
+      "imageUrl": null
+    }
+
+  ]
+}

@@ -1,0 +1,155 @@
+parameters:
+    qdrant_url: '%env(QDRANT_URL)%'
+    mailer_from: '%env(MAILER_FROM)%'
+    qdrant_collection: '%env(QDRANT_COLLECTION)%'
+    openai_api_key: '%env(OPENAI_API_KEY)%'
+    openai_embedding_model: '%env(OPENAI_EMBEDDING_MODEL)%'
+    language_model_api_key: '%env(LANGUAGE_MODEL_API_KEY)%'
+    language_model_name: '%env(LANGUAGE_MODEL_NAME)%'
+    search_similarity_threshold: '%env(float:SEARCH_SIMILARITY_THRESHOLD)%'
+    search_max_results: '%env(int:SEARCH_MAX_RESULTS)%'
+    admin_api_key: '%env(ADMIN_API_KEY)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # ---------------------------------------------------------------
+    # Catalog BC
+    # ---------------------------------------------------------------
+    App\Catalog\:
+        resource: '../src/Catalog/'
+        exclude:
+            - '../src/Catalog/Domain/Model/'
+            - '../src/Catalog/Domain/Event/'
+            - '../src/Catalog/Domain/Exception/'
+            - '../src/Catalog/Domain/Repository/'
+            - '../src/Catalog/Application/Command/*/*Command.php'
+            - '../src/Catalog/Application/Query/*/*Query.php'
+            - '../src/Catalog/Application/Query/*DTO.php'
+            - '../src/Catalog/Infrastructure/Persistence/Model/'
+
+    App\Catalog\Domain\Repository\ProductRepositoryInterface:
+        alias: App\Catalog\Infrastructure\Persistence\DoctrineProductRepository
+
+    # ---------------------------------------------------------------
+    # Cart BC
+    # ---------------------------------------------------------------
+    App\Cart\:
+        resource: '../src/Cart/'
+        exclude:
+            - '../src/Cart/Domain/Model/'
+            - '../src/Cart/Domain/Exception/'
+            - '../src/Cart/Domain/Repository/'
+            - '../src/Cart/Application/Command/*/*Command.php'
+            - '../src/Cart/Application/Query/*/*Query.php'
+            - '../src/Cart/Application/Query/*DTO.php'
+            - '../src/Cart/Infrastructure/Persistence/Model/'
+
+    App\Cart\Domain\Repository\CartRepositoryInterface:
+        alias: App\Cart\Infrastructure\Persistence\DoctrineCartRepository
+
+    # ---------------------------------------------------------------
+    # Order BC
+    # ---------------------------------------------------------------
+    App\Order\:
+        resource: '../src/Order/'
+        exclude:
+            - '../src/Order/Domain/Model/'
+            - '../src/Order/Domain/Exception/'
+            - '../src/Order/Domain/Repository/'
+            - '../src/Order/Application/Command/*/*Command.php'
+            - '../src/Order/Application/Query/*/*Query.php'
+            - '../src/Order/Application/Query/*DTO.php'
+            - '../src/Order/Infrastructure/Persistence/Model/'
+
+    App\Order\Domain\Repository\OrderRepositoryInterface:
+        alias: App\Order\Infrastructure\Persistence\DoctrineOrderRepository
+
+    # ---------------------------------------------------------------
+    # Search BC — Ports & Adapters
+    # ---------------------------------------------------------------
+    App\Search\:
+        resource: '../src/Search/'
+        exclude:
+            - '../src/Search/Domain/Model/'
+            - '../src/Search/Domain/Event/'
+            - '../src/Search/Domain/Port/'
+            - '../src/Search/Application/Query/*/*Query.php'
+            - '../src/Search/Application/Query/*DTO.php'
+
+    App\Search\Domain\Port\EmbeddingPort:
+        alias: App\Search\Infrastructure\Embedding\OpenAiEmbeddingAdapter
+
+    App\Search\Domain\Port\SemanticSearchPort:
+        alias: App\Search\Infrastructure\VectorDb\QdrantAdapter
+
+    # SemanticEnrichmentPort: NullAdapter si LANGUAGE_MODEL_API_KEY está vacío
+    App\Search\Domain\Port\SemanticEnrichmentPort:
+        alias: App\Search\Infrastructure\LlmEnrichment\SemanticEnrichmentAdapterFactory
+
+    App\Search\Domain\Port\QueryExpanderPort:
+        alias: App\Search\Infrastructure\LlmEnrichment\OpenAiQueryExpanderAdapter
+
+    App\Search\Infrastructure\LlmEnrichment\OpenAiQueryExpanderAdapter:
+        arguments:
+            $httpClient: '@openai.http_client'
+            $modelName: '%language_model_name%'
+
+    App\Search\Infrastructure\Embedding\OpenAiEmbeddingAdapter:
+        arguments:
+            $httpClient: '@openai.http_client'
+            $model: '%openai_embedding_model%'
+
+    App\Search\Infrastructure\VectorDb\QdrantAdapter:
+        arguments:
+            $httpClient: '@qdrant.http_client'
+            $collection: '%qdrant_collection%'
+
+    App\Search\Infrastructure\LlmEnrichment\SemanticEnrichmentAdapterFactory:
+        arguments:
+            $httpClient: '@openai.http_client'
+            $apiKey: '%language_model_api_key%'
+            $modelName: '%language_model_name%'
+
+    App\Search\Application\Query\SearchProducts\SearchProductsHandler:
+        arguments:
+            $similarityThreshold: '%search_similarity_threshold%'
+
+    # ---------------------------------------------------------------
+    # Shared BC
+    # ---------------------------------------------------------------
+    App\Shared\:
+        resource: '../src/Shared/'
+        exclude:
+            - '../src/Shared/Domain/'
+
+    App\Shared\Infrastructure\Security\ApiKeyAuthenticator:
+        arguments:
+            $adminApiKey: '%admin_api_key%'
+
+    App\Order\Infrastructure\Notification\SendOrderCreatedEmailHandler:
+        arguments:
+            $mailerFrom: '%mailer_from%'
+
+    App\Order\Infrastructure\Notification\SendOrderCancelledEmailHandler:
+        arguments:
+            $mailerFrom: '%mailer_from%'
+
+    # ---------------------------------------------------------------
+    # HTTP Clients
+    # ---------------------------------------------------------------
+    qdrant.http_client:
+        class: Symfony\Component\HttpClient\HttpClient
+        factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
+        arguments:
+            - base_uri: '%qdrant_url%'
+
+    openai.http_client:
+        class: Symfony\Component\HttpClient\HttpClient
+        factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
+        arguments:
+            - headers:
+                Authorization: 'Bearer %openai_api_key%'
+                Content-Type: 'application/json'

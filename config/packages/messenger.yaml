@@ -1,0 +1,37 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            # Transport síncrono para commands y queries (respuesta inmediata)
+            sync: 'sync://'
+
+            # Transport asíncrono para domain events.
+            # En dev/prod: Doctrine (tabla messenger_messages, auto-creada).
+            # En test: in-memory (ver when@test abajo).
+            async:
+                dsn: 'doctrine://default?queue_name=async&auto_setup=true'
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 0
+
+            failed: 'doctrine://default?queue_name=failed&auto_setup=true'
+
+        # Routing por interfaces marcadoras.
+        # Cada Command/Query implementa SyncMessageInterface → transport sync.
+        # Cada DomainEvent implementa DomainEventInterface → transport async.
+        # Esto evita listar clases concretas que aún no existen y romper el warmup.
+        routing:
+            'App\Shared\Domain\Bus\Command\CommandInterface': sync
+            'App\Shared\Domain\Bus\Query\QueryInterface': sync
+            'App\Shared\Domain\Event\DomainEventInterface': async
+            'App\Order\Domain\Event\OrderCreated': async
+            'App\Order\Domain\Event\OrderCancelled': async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping
+    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+        https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Order\Infrastructure\Persistence\Model\OrderOrm" table="orders">
+        <id name="id" type="string" column="id" />
+        <field name="customerId"          type="string"             column="customer_id"          nullable="true" />
+        <field name="customerEmail"       type="string"             column="customer_email"       nullable="true" />
+        <field name="totalAmount"        type="integer"            column="total_amount" />
+        <field name="totalCurrency"      type="string"             column="total_currency"       length="3" />
+        <field name="status"             type="string"             column="status"               length="20" />
+        <field name="shippingStreet"     type="string"             column="shipping_street" />
+        <field name="shippingCity"       type="string"             column="shipping_city" />
+        <field name="shippingPostalCode" type="string"             column="shipping_postal_code" length="20" />
+        <field name="shippingCountry"    type="string"             column="shipping_country"     length="2" />
+        <field name="linesJson"          type="text"               column="lines" />
+        <field name="createdAt"          type="datetime_immutable" column="created_at" />
+    </entity>
+
+</doctrine-mapping>

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose *)",
+      "Bash(curl -s -X POST http://localhost:8080/api/products -H 'Content-Type: application/json' -H 'Authorization: Bearer __TRACKED_VAR__' -d '{\"name\":\"Camiseta Térmica\",\"description\":\"Camiseta de running\",\"priceAmount\":2999,\"priceCurrency\":\"EUR\",\"category\":\"FITNESS\",\"brand\":\"Nike\",\"attributes\":{\"color\":[\"negro\"],\"talla\":[\"S\",\"M\",\"L\"]},\"stock\":25}')",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"http://localhost:8080/api/products?category=FITNESS\")",
+      "Bash(xargs cat)",
+      "Bash(xargs -I{} cat {})",
+      "WebFetch(domain:www.siroko.com)",
+      "WebSearch",
+      "WebFetch(domain:www.tradeinn.com)",
+      "WebFetch(domain:www.deporvillage.net)",
+      "Bash(curl -s http://localhost:6333/collections)"
+    ]
+  }
+}

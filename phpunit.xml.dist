@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         beStrictAboutOutputDuringTests="true"
+>
+    <extensions>
+        <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension">
+            <parameter name="clock-mock-namespaces" value="App" />
+            <parameter name="dns-mock-namespaces" value="App" />
+        </bootstrap>
+    </extensions>
+
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
+        </testsuite>
+        <testsuite name="Acceptance">
+            <directory>tests/Acceptance</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">src/Catalog/Domain</directory>
+            <directory suffix=".php">src/Cart/Domain</directory>
+            <directory suffix=".php">src/Order/Domain</directory>
+            <directory suffix=".php">src/Search/Domain</directory>
+            <directory suffix=".php">src/Catalog/Application</directory>
+            <directory suffix=".php">src/Cart/Application</directory>
+            <directory suffix=".php">src/Order/Application</directory>
+            <directory suffix=".php">src/Search/Application</directory>
+        </include>
+    </coverage>
+
+    <php>
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
+        <server name="APP_ENV" value="test" force="true"/>
+        <server name="APP_SECRET" value="test-secret-32-chars-long-string!" force="true"/>
+        <server name="SHELL_VERBOSITY" value="-1"/>
+        <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
+        <server name="SYMFONY_PHPUNIT_VERSION" value="11.2"/>
+        <!-- Routing / URLs en tests funcionales -->
+        <server name="DEFAULT_URI" value="http://localhost"/>
+        <!-- Base de datos: SQLite en memoria para tests de integración -->
+        <server name="DATABASE_URL" value="sqlite:///:memory:" force="true"/>
+        <!-- Search BC: stubs, sin conexiones reales -->
+        <server name="ADMIN_API_KEY" value="test-admin-key" force="true"/>
+        <server name="OPENAI_API_KEY" value="sk-test" force="true"/>
+        <server name="LANGUAGE_MODEL_API_KEY" value="" force="true"/>
+        <server name="LANGUAGE_MODEL_PROVIDER" value="openai" force="true"/>
+        <server name="LANGUAGE_MODEL_NAME" value="gpt-4o-mini" force="true"/>
+        <server name="QDRANT_URL" value="http://localhost:6333" force="true"/>
+        <server name="QDRANT_COLLECTION" value="siroko_test" force="true"/>
+        <server name="SEARCH_SIMILARITY_THRESHOLD" value="0.75" force="true"/>
+        <server name="SEARCH_MAX_RESULTS" value="10" force="true"/>
+        <!-- Messenger: todo en memoria en tests -->
+        <server name="MESSENGER_TRANSPORT_DSN" value="in-memory://" force="true"/>
+    </php>
+</phpunit>

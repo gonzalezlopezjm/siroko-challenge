@@ -1,0 +1,13 @@
+services:
+    Tests\Stub\Search\InMemoryEmbeddingAdapter: ~
+
+    Tests\Stub\Search\InMemorySemanticSearchAdapter: ~
+
+    App\Search\Domain\Port\EmbeddingPort:
+        alias: Tests\Stub\Search\InMemoryEmbeddingAdapter
+
+    App\Search\Domain\Port\SemanticSearchPort:
+        alias: Tests\Stub\Search\InMemorySemanticSearchAdapter
+
+    App\Search\Domain\Port\SemanticEnrichmentPort:
+        alias: App\Search\Infrastructure\LlmEnrichment\NullSemanticEnrichmentAdapter

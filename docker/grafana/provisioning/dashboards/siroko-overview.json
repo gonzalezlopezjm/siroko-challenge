@@ -1,0 +1,277 @@
+{
+  "uid": "siroko-overview",
+  "title": "Siroko — Observabilidad",
+  "description": "Pedidos, búsquedas y actividad en tiempo real",
+  "tags": ["siroko", "ecommerce"],
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": { "from": "now-7d", "to": "now" },
+  "schemaVersion": 38,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Pedidos creados",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "green", "mode": "fixed" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+        "rawQuery": true,
+        "rawSql": "SELECT NOW() AS time, COUNT(*) AS \"Pedidos\" FROM app_metrics WHERE metric = 'orders.created' AND $__timeFilter(occurred_at)",
+        "format": "table",
+        "refId": "A"
+      }]
+    },
+
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Pedidos cancelados",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "red", "mode": "fixed" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+        "rawQuery": true,
+        "rawSql": "SELECT NOW() AS time, COUNT(*) AS \"Cancelados\" FROM app_metrics WHERE metric = 'orders.cancelled' AND $__timeFilter(occurred_at)",
+        "format": "table",
+        "refId": "A"
+      }]
+    },
+
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Búsquedas realizadas",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "blue", "mode": "fixed" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+        "rawQuery": true,
+        "rawSql": "SELECT NOW() AS time, COUNT(*) AS \"Búsquedas\" FROM app_metrics WHERE metric = 'search.performed' AND $__timeFilter(occurred_at)",
+        "format": "table",
+        "refId": "A"
+      }]
+    },
+
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Búsquedas sin resultados",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "orange", "mode": "fixed" },
+          "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "orange", "value": null }] }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+        "rawQuery": true,
+        "rawSql": "SELECT NOW() AS time, COUNT(*) AS \"Sin resultados\" FROM app_metrics WHERE metric = 'search.no_results' AND $__timeFilter(occurred_at)",
+        "format": "table",
+        "refId": "A"
+      }]
+    },
+
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Pedidos en el tiempo",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "legend": { "calcs": ["sum", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "lineWidth": 1,
+            "barAlignment": 0,
+            "stacking": { "mode": "normal", "group": "A" }
+          },
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroup(occurred_at, $__interval, 0) AS \"time\",\n  COUNT(*) AS \"Creados\"\nFROM app_metrics\nWHERE metric = 'orders.created'\n  AND $__timeFilter(occurred_at)\nGROUP BY 1 ORDER BY 1",
+          "format": "time_series",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroup(occurred_at, $__interval, 0) AS \"time\",\n  COUNT(*) AS \"Cancelados\"\nFROM app_metrics\nWHERE metric = 'orders.cancelled'\n  AND $__timeFilter(occurred_at)\nGROUP BY 1 ORDER BY 1",
+          "format": "time_series",
+          "refId": "B"
+        }
+      ]
+    },
+
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Búsquedas en el tiempo",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "legend": { "calcs": ["sum", "max"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "lineWidth": 2,
+            "lineInterpolation": "smooth",
+            "spanNulls": true
+          },
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroup(occurred_at, $__interval, 0) AS \"time\",\n  COUNT(*) AS \"Búsquedas totales\"\nFROM app_metrics\nWHERE metric = 'search.performed'\n  AND $__timeFilter(occurred_at)\nGROUP BY 1 ORDER BY 1",
+          "format": "time_series",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroup(occurred_at, $__interval, 0) AS \"time\",\n  COUNT(*) AS \"Sin resultados\"\nFROM app_metrics\nWHERE metric = 'search.no_results'\n  AND $__timeFilter(occurred_at)\nGROUP BY 1 ORDER BY 1",
+          "format": "time_series",
+          "refId": "B"
+        }
+      ]
+    },
+
+    {
+      "id": 7,
+      "type": "barchart",
+      "title": "Actividad por hora del día (patrón semanal)",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 12 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "barWidth": 0.7,
+        "groupWidth": 0.7,
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "orientation": "auto",
+        "stacking": "none",
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "xTickLabelRotation": 0
+      },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" } }
+      },
+      "targets": [{
+        "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+        "rawQuery": true,
+        "rawSql": "SELECT\n  EXTRACT(HOUR FROM occurred_at)::int AS \"Hora\",\n  SUM(CASE WHEN metric = 'orders.created'   THEN 1 ELSE 0 END) AS \"Pedidos\",\n  SUM(CASE WHEN metric = 'search.performed' THEN 1 ELSE 0 END) AS \"Búsquedas\"\nFROM app_metrics\nWHERE $__timeFilter(occurred_at)\nGROUP BY 1 ORDER BY 1",
+        "format": "table",
+        "refId": "A"
+      }]
+    },
+
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Revenue (€)",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+      "options": {
+        "legend": { "calcs": ["sum", "mean"], "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyEUR",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "lineWidth": 2,
+            "lineInterpolation": "smooth",
+            "spanNulls": true
+          },
+          "color": { "fixedColor": "green", "mode": "fixed" }
+        }
+      },
+      "targets": [{
+        "datasource": { "type": "postgres", "uid": "siroko-postgres" },
+        "rawQuery": true,
+        "rawSql": "SELECT\n  $__timeGroup(occurred_at, $__interval, 0) AS \"time\",\n  SUM(value) AS \"Revenue (€)\"\nFROM app_metrics\nWHERE metric = 'orders.revenue'\n  AND $__timeFilter(occurred_at)\nGROUP BY 1 ORDER BY 1",
+        "format": "time_series",
+        "refId": "A"
+      }]
+    }
+
+  ],
+
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "links": []
+}

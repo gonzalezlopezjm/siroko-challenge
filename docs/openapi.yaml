@@ -1,0 +1,1076 @@
+openapi: 3.1.0
+
+info:
+  title: Siroko Senior Challenge API
+  version: 1.0.0
+  description: |
+    API REST para el Siroko Senior PHP Challenge.
+
+    Integra dos bounded contexts:
+    - **Catalog + Cart + Order** (Opción A): gestión de productos, carrito y checkout.
+    - **Semantic Search** (Opción B): búsqueda por intención con embeddings y fallback a LLM.
+
+    ### Autenticación
+    Los endpoints de escritura del catálogo requieren autenticación mediante API Key:
+    ```
+    Authorization: Bearer <ADMIN_API_KEY>
+    ```
+    El resto de la API es pública.
+
+servers:
+  - url: http://localhost:8080
+    description: Docker local
+
+tags:
+  - name: Catalog (public)
+    description: Consulta del catálogo de productos
+  - name: Catalog (admin)
+    description: Gestión del catálogo — requiere autenticación ADMIN
+  - name: Cart
+    description: Gestión del carrito de compra
+  - name: Order
+    description: Checkout y consulta de órdenes
+  - name: Search
+    description: Búsqueda semántica de productos
+
+# ---------------------------------------------------------------------------
+# Security
+# ---------------------------------------------------------------------------
+security: []  # por defecto sin auth; los endpoints admin lo declaran explícitamente
+
+components:
+  securitySchemes:
+    AdminApiKey:
+      type: http
+      scheme: bearer
+      description: API Key estática configurada en ADMIN_API_KEY
+
+  # -------------------------------------------------------------------------
+  # Schemas reutilizables
+  # -------------------------------------------------------------------------
+  schemas:
+
+    # --- Value Objects -------------------------------------------------------
+
+    UUID:
+      type: string
+      format: uuid
+      example: "123e4567-e89b-12d3-a456-426614174000"
+
+    Money:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: integer
+          description: Importe en céntimos (nunca float)
+          example: 9999
+        currency:
+          type: string
+          enum: [EUR, USD, GBP]
+          example: EUR
+      example:
+        amount: 9999
+        currency: EUR
+
+    Category:
+      type: string
+      enum: [CYCLING, FITNESS, APPAREL, ACCESSORIES]
+      example: CYCLING
+
+    OrderStatus:
+      type: string
+      enum: [PENDING, CONFIRMED, CANCELLED]
+      example: PENDING
+
+    ShippingAddress:
+      type: object
+      required: [street, city, postalCode, country]
+      properties:
+        street:
+          type: string
+          example: "Calle Mayor 12, 3ºB"
+        city:
+          type: string
+          example: "Madrid"
+        postalCode:
+          type: string
+          example: "28001"
+        country:
+          type: string
+          description: Código ISO 3166-1 alpha-2
+          example: "ES"
+
+    ProductAttributes:
+      type: object
+      description: Atributos extensibles del producto (colores, tallas, materiales…)
+      properties:
+        colors:
+          type: array
+          items:
+            type: string
+          example: ["negro", "azul marino"]
+        sizes:
+          type: array
+          items:
+            type: string
+          example: ["S", "M", "L", "XL"]
+        materials:
+          type: array
+          items:
+            type: string
+          example: ["lycra", "poliéster"]
+      additionalProperties:
+        type: array
+        items:
+          type: string
+
+    # --- Product -------------------------------------------------------------
+
+    ProductDTO:
+      type: object
+      required: [id, name, description, price, category, brand, stock, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          example: "Mallot Siroko K38 Carbon"
+        description:
+          type: string
+          example: "Mallot de ciclismo de alto rendimiento con tejido termorregulador."
+        price:
+          $ref: '#/components/schemas/Money'
+        category:
+          $ref: '#/components/schemas/Category'
+        brand:
+          type: string
+          example: "Siroko"
+        attributes:
+          $ref: '#/components/schemas/ProductAttributes'
+        stock:
+          type: integer
+          minimum: 0
+          example: 42
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://cdn.siroko.com/products/k38-carbon.jpg"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-05-28T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-05-28T10:00:00Z"
+
+    CreateProductRequest:
+      type: object
+      required: [name, price, category, brand, stock]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: "Mallot Siroko K38 Carbon"
+        description:
+          type: string
+          maxLength: 2000
+          default: ""
+          example: "Mallot de ciclismo de alto rendimiento."
+        price:
+          $ref: '#/components/schemas/Money'
+        category:
+          $ref: '#/components/schemas/Category'
+        brand:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Siroko"
+        attributes:
+          $ref: '#/components/schemas/ProductAttributes'
+        stock:
+          type: integer
+          minimum: 0
+          example: 42
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+          example: "https://cdn.siroko.com/products/k38-carbon.jpg"
+
+    UpdateProductRequest:
+      type: object
+      description: Todos los campos son opcionales; solo se actualizan los enviados.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 2000
+        price:
+          $ref: '#/components/schemas/Money'
+        category:
+          $ref: '#/components/schemas/Category'
+        brand:
+          type: string
+          minLength: 1
+          maxLength: 100
+        attributes:
+          $ref: '#/components/schemas/ProductAttributes'
+        stock:
+          type: integer
+          minimum: 0
+        imageUrl:
+          type: string
+          format: uri
+          nullable: true
+
+    ProductListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDTO'
+        pagination:
+          type: object
+          required: [page, pageSize, total, totalPages]
+          properties:
+            page:
+              type: integer
+              example: 1
+            pageSize:
+              type: integer
+              example: 20
+            total:
+              type: integer
+              example: 143
+            totalPages:
+              type: integer
+              example: 8
+
+    # --- Cart ----------------------------------------------------------------
+
+    CartItemDTO:
+      type: object
+      required: [productId, productName, unitPrice, quantity, subtotal]
+      properties:
+        productId:
+          $ref: '#/components/schemas/UUID'
+        productName:
+          type: string
+          description: Snapshot del nombre en el momento de añadir
+          example: "Mallot Siroko K38 Carbon"
+        unitPrice:
+          $ref: '#/components/schemas/Money'
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+          example: 2
+        subtotal:
+          $ref: '#/components/schemas/Money'
+
+    CartDTO:
+      type: object
+      required: [id, items, total, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        customerId:
+          type: string
+          nullable: true
+          example: "guest-550e8400-e29b-41d4-a716-446655440000"
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItemDTO'
+        total:
+          $ref: '#/components/schemas/Money'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AddItemRequest:
+      type: object
+      required: [productId, quantity]
+      properties:
+        productId:
+          $ref: '#/components/schemas/UUID'
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+          example: 2
+
+    UpdateItemRequest:
+      type: object
+      required: [quantity]
+      properties:
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+          example: 3
+
+    # --- Order ---------------------------------------------------------------
+
+    OrderLineDTO:
+      type: object
+      required: [id, productId, productName, unitPrice, quantity, subtotal]
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        productId:
+          $ref: '#/components/schemas/UUID'
+        productName:
+          type: string
+          description: Snapshot del nombre en el momento del checkout
+          example: "Mallot Siroko K38 Carbon"
+        unitPrice:
+          $ref: '#/components/schemas/Money'
+        quantity:
+          type: integer
+          example: 2
+        subtotal:
+          $ref: '#/components/schemas/Money'
+
+    OrderDTO:
+      type: object
+      required: [id, lines, total, status, shippingAddress, createdAt]
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        customerId:
+          type: string
+          nullable: true
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLineDTO'
+        total:
+          $ref: '#/components/schemas/Money'
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        createdAt:
+          type: string
+          format: date-time
+
+    CheckoutRequest:
+      type: object
+      required: [cartId, shippingAddress]
+      properties:
+        cartId:
+          $ref: '#/components/schemas/UUID'
+        customerId:
+          type: string
+          nullable: true
+          example: "guest-550e8400-e29b-41d4-a716-446655440000"
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+
+    # --- Search --------------------------------------------------------------
+
+    SearchResultDTO:
+      type: object
+      required: [productId, name, category, brand]
+      properties:
+        productId:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          example: "Mallot Siroko K38 Carbon"
+        category:
+          $ref: '#/components/schemas/Category'
+        brand:
+          type: string
+          example: "Siroko"
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Score de similitud vectorial (0–1, cosine similarity)
+          example: 0.92
+
+    SearchMeta:
+      type: object
+      required: [results_count]
+      properties:
+        results_count:
+          type: integer
+          example: 4
+
+    SearchResponse:
+      type: object
+      required: [results, meta]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResultDTO'
+        meta:
+          $ref: '#/components/schemas/SearchMeta'
+
+    # --- Errors --------------------------------------------------------------
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              example: product_not_found
+            message:
+              type: string
+              example: "Product with id '123e4567-...' was not found."
+            context:
+              type: object
+              additionalProperties: true
+              example:
+                productId: "123e4567-e89b-12d3-a456-426614174000"
+
+  # -------------------------------------------------------------------------
+  # Reusable responses
+  # -------------------------------------------------------------------------
+  responses:
+    Unauthorized:
+      description: Token ausente o inválido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: unauthorized
+              message: "Invalid API key."
+
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    UnprocessableEntity:
+      description: Error de validación o regla de negocio
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Conflict:
+      description: Conflicto de estado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+# =============================================================================
+# PATHS
+# =============================================================================
+paths:
+
+  # ---------------------------------------------------------------------------
+  # CATALOG — Admin
+  # ---------------------------------------------------------------------------
+
+  /api/products:
+    post:
+      summary: Crear producto
+      description: |
+        Crea un nuevo producto en el catálogo.
+        La indexación semántica en Qdrant se realiza automáticamente en background
+        mediante el evento `ProductCreated`.
+      tags: [Catalog (admin)]
+      security:
+        - AdminApiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+            example:
+              name: "Mallot Siroko K38 Carbon"
+              description: "Mallot de ciclismo de alto rendimiento con tejido termorregulador."
+              price:
+                amount: 9999
+                currency: EUR
+              category: CYCLING
+              brand: "Siroko"
+              attributes:
+                colors: ["negro", "azul marino"]
+                sizes: ["S", "M", "L", "XL"]
+              stock: 42
+              imageUrl: "https://cdn.siroko.com/products/k38-carbon.jpg"
+      responses:
+        '201':
+          description: Producto creado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [productId]
+                properties:
+                  productId:
+                    $ref: '#/components/schemas/UUID'
+              example:
+                productId: "123e4567-e89b-12d3-a456-426614174000"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+    get:
+      summary: Listar productos
+      tags: [Catalog (public)]
+      parameters:
+        - name: category
+          in: query
+          schema:
+            $ref: '#/components/schemas/Category'
+        - name: brand
+          in: query
+          schema:
+            type: string
+          example: Siroko
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+              example:
+                data:
+                  - id: "123e4567-e89b-12d3-a456-426614174000"
+                    name: "Mallot Siroko K38 Carbon"
+                    description: "Mallot de ciclismo de alto rendimiento."
+                    price:
+                      amount: 9999
+                      currency: EUR
+                    category: CYCLING
+                    brand: Siroko
+                    attributes:
+                      colors: ["negro", "azul marino"]
+                      sizes: ["S", "M", "L", "XL"]
+                    stock: 42
+                    imageUrl: "https://cdn.siroko.com/products/k38-carbon.jpg"
+                    createdAt: "2026-05-28T10:00:00Z"
+                    updatedAt: "2026-05-28T10:00:00Z"
+                pagination:
+                  page: 1
+                  pageSize: 20
+                  total: 143
+                  totalPages: 8
+
+  /api/products/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+
+    get:
+      summary: Obtener producto
+      tags: [Catalog (public)]
+      responses:
+        '200':
+          description: Detalle del producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDTO'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Actualizar producto
+      description: |
+        Actualización parcial. Solo se modifican los campos enviados.
+        Si se actualiza `name` o `description`, se re-indexa automáticamente en background.
+      tags: [Catalog (admin)]
+      security:
+        - AdminApiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+            example:
+              stock: 55
+              price:
+                amount: 8999
+                currency: EUR
+      responses:
+        '204':
+          description: Producto actualizado
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+    delete:
+      summary: Eliminar producto
+      description: Elimina el producto del catálogo y del índice vectorial.
+      tags: [Catalog (admin)]
+      security:
+        - AdminApiKey: []
+      responses:
+        '204':
+          description: Producto eliminado
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ---------------------------------------------------------------------------
+  # CART
+  # ---------------------------------------------------------------------------
+
+  /api/carts:
+    post:
+      summary: Crear carrito
+      tags: [Cart]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                  nullable: true
+                  example: "guest-550e8400-e29b-41d4-a716-446655440000"
+            example:
+              customerId: null
+      responses:
+        '201':
+          description: Carrito creado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [cartId]
+                properties:
+                  cartId:
+                    $ref: '#/components/schemas/UUID'
+              example:
+                cartId: "550e8400-e29b-41d4-a716-446655440000"
+
+  /api/carts/{cartId}:
+    parameters:
+      - name: cartId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+
+    get:
+      summary: Obtener carrito
+      tags: [Cart]
+      responses:
+        '200':
+          description: Estado actual del carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartDTO'
+              example:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                customerId: null
+                items:
+                  - productId: "123e4567-e89b-12d3-a456-426614174000"
+                    productName: "Mallot Siroko K38 Carbon"
+                    unitPrice:
+                      amount: 9999
+                      currency: EUR
+                    quantity: 2
+                    subtotal:
+                      amount: 19998
+                      currency: EUR
+                total:
+                  amount: 19998
+                  currency: EUR
+                createdAt: "2026-05-28T10:05:00Z"
+                updatedAt: "2026-05-28T10:10:00Z"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/carts/{cartId}/items:
+    parameters:
+      - name: cartId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+
+    post:
+      summary: Añadir ítem al carrito
+      description: |
+        Si el producto ya existe en el carrito, incrementa la cantidad.
+        Valida stock disponible en el momento de añadir.
+
+        **Reglas:**
+        - Máximo 50 líneas distintas por carrito.
+        - Máximo 99 unidades por línea.
+        - No se puede añadir un producto con stock = 0.
+      tags: [Cart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemRequest'
+            example:
+              productId: "123e4567-e89b-12d3-a456-426614174000"
+              quantity: 2
+      responses:
+        '204':
+          description: Ítem añadido
+        '404':
+          description: Carrito o producto no encontrado
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Stock insuficiente, cantidad inválida o límite de carrito superado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                insufficient_stock:
+                  value:
+                    error:
+                      code: insufficient_stock
+                      message: "Product 'Mallot Siroko K38 Carbon' has no stock available."
+                      context:
+                        productId: "123e4567-e89b-12d3-a456-426614174000"
+                        available: 0
+                        requested: 2
+                cart_lines_limit:
+                  value:
+                    error:
+                      code: cart_lines_limit_exceeded
+                      message: "Cart cannot have more than 50 different items."
+
+    delete:
+      summary: Vaciar carrito
+      tags: [Cart]
+      responses:
+        '204':
+          description: Carrito vaciado
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/carts/{cartId}/items/{productId}:
+    parameters:
+      - name: cartId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      - name: productId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+
+    patch:
+      summary: Actualizar cantidad de un ítem
+      tags: [Cart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateItemRequest'
+            example:
+              quantity: 3
+      responses:
+        '204':
+          description: Cantidad actualizada
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+    delete:
+      summary: Eliminar ítem del carrito
+      tags: [Cart]
+      responses:
+        '204':
+          description: Ítem eliminado
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ---------------------------------------------------------------------------
+  # ORDER
+  # ---------------------------------------------------------------------------
+
+  /api/orders:
+    post:
+      summary: Checkout — crear orden
+      description: |
+        Procesa el carrito y genera una orden persistente.
+
+        **Validaciones en el momento del checkout:**
+        - El carrito no puede estar vacío.
+        - Se verifica el stock real de **cada producto** contra el catálogo en el instante de la orden.
+          Si cualquier línea no tiene stock suficiente, la operación falla completamente (atomicidad total).
+        - El stock se descuenta dentro de la misma transacción que crea la orden.
+
+        La orden se crea en estado `PENDING`.
+      tags: [Order]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+            example:
+              cartId: "550e8400-e29b-41d4-a716-446655440000"
+              customerId: null
+              shippingAddress:
+                street: "Calle Mayor 12, 3ºB"
+                city: "Madrid"
+                postalCode: "28001"
+                country: "ES"
+      responses:
+        '201':
+          description: Orden creada
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [orderId]
+                properties:
+                  orderId:
+                    $ref: '#/components/schemas/UUID'
+              example:
+                orderId: "660e8400-e29b-41d4-a716-446655440001"
+        '404':
+          description: Carrito no encontrado
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Carrito vacío o stock insuficiente en uno o más productos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                cart_is_empty:
+                  value:
+                    error:
+                      code: cart_is_empty
+                      message: "Cannot checkout an empty cart."
+                      context:
+                        cartId: "550e8400-e29b-41d4-a716-446655440000"
+                insufficient_stock:
+                  value:
+                    error:
+                      code: insufficient_stock
+                      message: "Product 'Mallot Siroko K38 Carbon' only has 1 unit(s) in stock, 3 requested."
+                      context:
+                        productId: "123e4567-e89b-12d3-a456-426614174000"
+                        available: 1
+                        requested: 3
+
+  /api/orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+
+    get:
+      summary: Obtener orden
+      tags: [Order]
+      responses:
+        '200':
+          description: Detalle de la orden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+              example:
+                id: "660e8400-e29b-41d4-a716-446655440001"
+                customerId: null
+                lines:
+                  - id: "770e8400-e29b-41d4-a716-446655440002"
+                    productId: "123e4567-e89b-12d3-a456-426614174000"
+                    productName: "Mallot Siroko K38 Carbon"
+                    unitPrice:
+                      amount: 9999
+                      currency: EUR
+                    quantity: 2
+                    subtotal:
+                      amount: 19998
+                      currency: EUR
+                total:
+                  amount: 19998
+                  currency: EUR
+                status: PENDING
+                shippingAddress:
+                  street: "Calle Mayor 12, 3ºB"
+                  city: "Madrid"
+                  postalCode: "28001"
+                  country: "ES"
+                createdAt: "2026-05-28T10:15:00Z"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/orders/{orderId}/cancel:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+
+    post:
+      summary: Cancelar orden
+      tags: [Order]
+      responses:
+        '204':
+          description: Orden cancelada
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: La orden ya está cancelada o no se puede cancelar desde su estado actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: order_already_cancelled
+                  message: "Order '660e8400-...' is already cancelled."
+                  context:
+                    orderId: "660e8400-e29b-41d4-a716-446655440001"
+                    currentStatus: CANCELLED
+
+  # ---------------------------------------------------------------------------
+  # SEARCH
+  # ---------------------------------------------------------------------------
+
+  /api/search:
+    get:
+      summary: Búsqueda semántica de productos
+      description: |
+        Busca productos por intención del usuario, no por palabras clave exactas.
+
+        **Flujo:**
+        1. Se normaliza la query con expansión de sinónimos en español.
+        2. Se genera un embedding de la query normalizada.
+        3. Se busca en Qdrant con threshold de similitud configurable.
+        4. Se aplica un filtro de tipo de producto cuando la query contiene una palabra de tipo
+           específico (e.g. "calcetines", "camiseta", "chaleco") para evitar resultados semánticamente
+           cercanos pero de tipo incorrecto.
+        5. Los resultados se devuelven ordenados por score descendente. Si no hay resultados, se
+           devuelve una lista vacía.
+      tags: [Search]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 500
+          example: "mallot mizuno oscuro"
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          example: 10
+      responses:
+        '200':
+          description: Resultados de búsqueda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+              examples:
+                search_hit:
+                  summary: Resultados por similitud vectorial
+                  value:
+                    results:
+                      - productId: "123e4567-e89b-12d3-a456-426614174000"
+                        name: "Mallot Siroko K38 Carbon"
+                        category: CYCLING
+                        brand: Siroko
+                        score: 0.92
+                      - productId: "234e5678-e89b-12d3-a456-426614174001"
+                        name: "Mallot Siroko Aero Team"
+                        category: CYCLING
+                        brand: Siroko
+                        score: 0.87
+                    meta:
+                      results_count: 2
+
+                no_results:
+                  summary: Sin resultados vectoriales
+                  value:
+                    results: []
+                    meta:
+                      results_count: 0
+
+        '422':
+          description: Query vacía o inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: invalid_search_query
+                  message: "Search query cannot be empty."
+        '503':
+          description: Servicio de embeddings no disponible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: embedding_service_unavailable
+                  message: "The embedding service is currently unavailable. Please try again later."
