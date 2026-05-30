@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Cart\Infrastructure\Persistence\Model;
 
-final class CartOrm
+class CartOrm
 {
     public string $id;
     public ?string $customerId;

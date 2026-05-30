@@ -19,8 +19,10 @@ use App\Order\Domain\Model\OrderLineId;
 use App\Order\Domain\Model\ShippingAddress;
 use App\Order\Domain\Repository\OrderRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsMessageHandler]
 final class CheckoutOrderHandler
@@ -31,6 +33,8 @@ final class CheckoutOrderHandler
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly EntityManagerInterface $em,
         private readonly MessageBusInterface $eventBus,
+        #[Autowire(service: 'cache.products')]
+        private readonly TagAwareCacheInterface $cache,
     ) {}
 
     public function __invoke(CheckoutOrderCommand $command): string
@@ -80,6 +84,7 @@ final class CheckoutOrderHandler
 
                 $product->decreaseStock($requested);
                 $this->productRepository->save($product);
+                $this->cache->invalidateTags(['product.' . $product->id()->value(), 'products.list']);
             }
 
             $orderId = OrderId::generate();

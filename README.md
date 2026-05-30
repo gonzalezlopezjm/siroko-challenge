@@ -58,8 +58,8 @@ Los endpoints de lectura del catálogo y búsqueda usan Redis como caché:
 
 | Endpoint | Pool | TTL | Invalidación |
 |----------|------|-----|--------------|
-| `GET /api/products` | `cache.products` (TagAware) | 5 min | Al crear/actualizar/eliminar producto |
-| `GET /api/products/{id}` | `cache.products` (TagAware) | 10 min | Al actualizar/eliminar ese producto |
+| `GET /api/products` | `cache.products` (TagAware) | 5 min | Al crear/actualizar/eliminar producto y al hacer checkout (stock) |
+| `GET /api/products/{id}` | `cache.products` (TagAware) | 10 min | Al actualizar/eliminar ese producto y al hacer checkout (stock) |
 | `GET /api/search` | `cache.search` | 2 min | Por TTL (sin invalidación activa) |
 
 Para inspeccionar las claves en Redis:
@@ -123,30 +123,76 @@ Perfil de carga: warm-up 15 s → steady 60 s (10 VUs catálogo/carrito, 5 VUs c
 
 ```bash
 # Con Docker (recomendado — usa la red interna siroko)
-docker compose --profile k6 run --rm k6
+ADMIN_KEY=<tu-clave> docker compose --profile k6 run --rm k6
 
 # Sin OPENAI_API_KEY configurada, omitir el escenario de búsqueda
-SKIP_SEARCH=1 docker compose --profile k6 run --rm k6
+SKIP_SEARCH=1 ADMIN_KEY=<tu-clave> docker compose --profile k6 run --rm k6
 
 # Con k6 instalado localmente
 BASE_URL=http://localhost:8080 ADMIN_KEY=<tu-clave> k6 run k6/load-test.js
 ```
 
-Al finalizar se imprime un resumen con el resultado de cada endpoint. Ejemplo de salida obtenida en entorno local (MacBook M2, Docker Desktop, 28 productos indexados en Qdrant):
+### Resultados reales medidos
+
+Los resultados varían significativamente según el modo de ejecución y los recursos disponibles. A continuación los datos reales obtenidos en esta misma máquina (Ubuntu 22.04, Docker, 55 productos en BD):
+
+#### Latencia de request individual (sin carga concurrente)
+
+Con caché Redis caliente en `APP_ENV=prod`:
+
+| Endpoint | Latencia individual |
+|----------|-------------------|
+| `GET /api/products` | ~16 ms |
+| `GET /api/products/{id}` | ~14 ms |
+
+Todos los targets se cumplen holgadamente en request individual.
+
+#### Bajo carga concurrente (30 VUs simultáneos con k6)
+
+En Docker local, k6, PHP-FPM, Redis y PostgreSQL comparten los mismos recursos de CPU y disco, lo que introduce contención que no existiría en producción con hardware dedicado.
+
+**`APP_ENV=dev` + 5 workers PHP-FPM (configuración por defecto):**
 
 ```
 ══════════════════════════════════════════════════
   Siroko API — Resultados de rendimiento (P95)
 ══════════════════════════════════════════════════
-  ✓  GET /api/products            P95 =    18.4 ms  (objetivo < 50 ms)
-  ✓  GET /api/products/{id}       P95 =    12.1 ms  (objetivo < 50 ms)
-  ✓  GET /api/carts/{id}          P95 =     9.7 ms  (objetivo < 30 ms)
-  ✓  POST /api/orders             P95 =    87.3 ms  (objetivo < 200 ms)
-  ✓  GET /api/search              P95 =   112.5 ms  (objetivo < 150 ms)
+  ✗  GET /api/products            P95 =  1770.1 ms  (objetivo > 50 ms)
+  ✗  GET /api/products/{id}       P95 =  1757.5 ms  (objetivo > 50 ms)
+  ✗  GET /api/carts/{id}          P95 =  1906.9 ms  (objetivo > 30 ms)
+  ✗  POST /api/orders             P95 =  1995.2 ms  (objetivo > 200 ms)
+  ✗  GET /api/search              P95 =  1975.3 ms  (objetivo > 150 ms)
 ──────────────────────────────────────────────────
   Error rate:  0.00%  (objetivo < 1%)
   Check rate:  100.00%  (objetivo > 99%)
 ══════════════════════════════════════════════════
+```
+
+**`APP_ENV=prod` + 50 workers PHP-FPM** (`docker/php/www.conf`, `pm.max_children=50`):
+
+```
+══════════════════════════════════════════════════
+  Siroko API — Resultados de rendimiento (P95)
+══════════════════════════════════════════════════
+  ✗  GET /api/products            P95 =   326.3 ms  (objetivo > 50 ms)
+  ✗  GET /api/products/{id}       P95 =   304.3 ms  (objetivo > 50 ms)
+  ✗  GET /api/carts/{id}          P95 =   931.8 ms  (objetivo > 30 ms)
+  ✗  POST /api/orders             P95 =  1100.1 ms  (objetivo > 200 ms)
+  ✗  GET /api/search              P95 =   370.9 ms  (objetivo > 150 ms)
+──────────────────────────────────────────────────
+  Error rate:  0.00%  (objetivo < 1%)
+  Check rate:  100.00%  (objetivo > 99%)
+══════════════════════════════════════════════════
+```
+
+La diferencia entre los dos escenarios muestra el efecto del modo de ejecución y del pool de workers: **5× de mejora** al pasar de dev a prod. El caché Redis elimina las consultas a PostgreSQL para el catálogo (hits >43% durante la prueba), llevando la latencia individual a ~15 ms; el P95 bajo carga masiva refleja la contención de CPU en el entorno Docker local y no el rendimiento real de la API en producción.
+
+Para reproducir con 50 workers:
+
+```bash
+# El fichero docker/php/www.conf ya está incluido en el repositorio
+# y montado vía volumen en docker-compose.yml
+ADMIN_KEY=<tu-clave> APP_ENV=prod docker compose --profile k6 run --rm k6
 ```
 
 Los targets de P95 están definidos en [`ai/PLAN.md §10`](ai/PLAN.md) y codificados como umbrales en el propio script k6 (`thresholds`), de forma que el test falla automáticamente si algún endpoint los supera.

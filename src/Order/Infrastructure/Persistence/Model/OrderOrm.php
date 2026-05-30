@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Order\Infrastructure\Persistence\Model;
 
-final class OrderOrm
+class OrderOrm
 {
     public string $id;
     public ?string $customerId;
