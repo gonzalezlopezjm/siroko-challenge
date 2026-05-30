@@ -38,7 +38,19 @@ docker-compose up --build
 # La API estará disponible en http://localhost:8080
 ```
 
-El entrypoint ejecuta automáticamente: `composer install` → migraciones → warmup de caché → creación de colección Qdrant.
+El entrypoint ejecuta automáticamente estos pasos en orden:
+
+1. `composer install` (sin scripts, para evitar timeouts antes de que la DB esté lista)
+2. Espera a que PostgreSQL acepte conexiones
+3. `doctrine:migrations:migrate` — aplica migraciones pendientes
+4. `cache:warmup` — calienta la caché de Symfony
+5. `app:qdrant:ensure-collection` — crea la colección vectorial si no existe
+6. `app:fixtures:load` — carga los 28 productos de muestra (omite los ya existentes)
+7. **`app:search:reindex`** — indexa los productos en Qdrant para búsqueda semántica  
+   > **Requiere `OPENAI_API_KEY` configurada.** Si la variable no está definida, este paso se omite silenciosamente y el endpoint `GET /api/search` devolverá resultados vacíos.
+8. `app:metrics:seed` — genera datos históricos de ejemplo para Grafana (si no existen)
+9. `app:demo:setup` — crea pedidos y emails de demo (si no existen)
+10. Arranca `supervisord` con php-fpm y el worker de Symfony Messenger
 
 ### Caché Redis
 
