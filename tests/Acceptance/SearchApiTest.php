@@ -59,9 +59,18 @@ final class SearchApiTest extends WebTestCase
         self::assertArrayHasKey('results', $body);
         self::assertArrayHasKey('meta', $body);
         self::assertCount(1, $body['results']);
-        self::assertSame('Mallot Mizuno', $body['results'][0]['name']);
-        self::assertSame('CYCLING', $body['results'][0]['category']);
-        self::assertSame('Mizuno', $body['results'][0]['brand']);
+
+        $result = $body['results'][0];
+        self::assertArrayHasKey('id', $result);
+        self::assertSame('Mallot Mizuno', $result['name']);
+        self::assertSame('Mallot de ciclismo profesional', $result['description']);
+        self::assertSame(['amount' => 4999, 'currency' => 'EUR'], $result['price']);
+        self::assertSame('CYCLING', $result['category']);
+        self::assertSame('Mizuno', $result['brand']);
+        self::assertSame(10, $result['stock']);
+        self::assertArrayHasKey('attributes', $result);
+        self::assertArrayHasKey('createdAt', $result);
+        self::assertArrayHasKey('updatedAt', $result);
         self::assertSame(1, $body['meta']['results_count']);
     }
 

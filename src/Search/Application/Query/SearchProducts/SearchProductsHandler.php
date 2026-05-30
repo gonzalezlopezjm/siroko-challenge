@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Search\Application\Query\SearchProducts;
 
+use App\Catalog\Application\Query\GetProduct\GetProductQuery;
+use App\Catalog\Application\Query\ProductDTO;
 use App\Search\Application\Query\SearchResponseDTO;
 use App\Search\Application\Query\SearchResultDTO;
 use App\Search\Domain\Event\SearchPerformed;
@@ -14,6 +16,7 @@ use App\Search\Domain\Port\SemanticSearchPort;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -53,22 +56,39 @@ final class SearchProductsHandler
                     $keywordFallback = !empty($results);
                 }
 
+                $enriched = [];
+                foreach ($results as $r) {
+                    $productDto = $this->fetchProduct($r->productId);
+                    if ($productDto !== null) {
+                        $enriched[] = new SearchResultDTO($productDto, $r->score);
+                    }
+                }
+
                 $this->eventBus->dispatch(new SearchPerformed(
                     query: $query->query,
-                    resultsCount: count($results),
+                    resultsCount: count($enriched),
                     keywordFallback: $keywordFallback,
                 ));
 
                 return new SearchResponseDTO(
-                    results: array_map(
-                        fn(SearchResult $r) => new SearchResultDTO($r->productId, $r->name, $r->category, $r->brand, $r->score),
-                        $results,
-                    ),
-                    resultsCount: count($results),
+                    results: $enriched,
+                    resultsCount: count($enriched),
                 );
             },
         );
 
         return $response;
+    }
+
+    private function fetchProduct(string $productId): ?ProductDTO
+    {
+        try {
+            $envelope = $this->eventBus->dispatch(new GetProductQuery($productId));
+            $result   = $envelope->last(HandledStamp::class)?->getResult();
+
+            return $result instanceof ProductDTO ? $result : null;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

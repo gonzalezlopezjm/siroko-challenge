@@ -17,5 +17,6 @@ when@test:
             pools:
                 cache.products:
                     adapter: cache.adapter.array
+                    tags: true
                 cache.search:
                     adapter: cache.adapter.array

@@ -383,26 +383,17 @@ components:
     # --- Search --------------------------------------------------------------
 
     SearchResultDTO:
-      type: object
-      required: [productId, name, category, brand]
-      properties:
-        productId:
-          $ref: '#/components/schemas/UUID'
-        name:
-          type: string
-          example: "Mallot Siroko K38 Carbon"
-        category:
-          $ref: '#/components/schemas/Category'
-        brand:
-          type: string
-          example: "Siroko"
-        score:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 1
-          description: Score de similitud vectorial (0–1, cosine similarity)
-          example: 0.92
+      allOf:
+        - $ref: '#/components/schemas/ProductDTO'
+        - type: object
+          properties:
+            score:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: Score de similitud vectorial (0–1, cosine similarity)
+              example: 0.92
 
     SearchMeta:
       type: object

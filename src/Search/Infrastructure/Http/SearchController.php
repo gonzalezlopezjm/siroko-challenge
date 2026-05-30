@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Search\Infrastructure\Http;
 
 use App\Search\Application\Query\SearchResponseDTO;
+use App\Search\Application\Query\SearchResultDTO;
 use App\Search\Application\Query\SearchProducts\SearchProductsQuery;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,16 +45,29 @@ final class SearchController
 
     private function serialize(SearchResponseDTO $dto): array
     {
-        $results = array_map(fn($r) => array_filter([
-            'productId' => $r->productId,
-            'name'      => $r->name,
-            'category'  => $r->category,
-            'brand'     => $r->brand,
-            'score'     => $r->score,
-        ], fn($v) => $v !== null), $dto->results);
+        $results = array_map(function (SearchResultDTO $r): array {
+            $p    = $r->product;
+            $item = [
+                'id'          => $p->id,
+                'name'        => $p->name,
+                'description' => $p->description,
+                'price'       => ['amount' => $p->priceAmount, 'currency' => $p->priceCurrency],
+                'category'    => $p->category,
+                'brand'       => $p->brand,
+                'attributes'  => $p->attributes,
+                'stock'       => $p->stock,
+                'imageUrl'    => $p->imageUrl,
+                'createdAt'   => $p->createdAt,
+                'updatedAt'   => $p->updatedAt,
+            ];
+            if ($r->score !== null) {
+                $item['score'] = $r->score;
+            }
+            return $item;
+        }, $dto->results);
 
         return [
-            'results' => array_values($results),
+            'results' => $results,
             'meta'    => ['results_count' => $dto->resultsCount],
         ];
     }

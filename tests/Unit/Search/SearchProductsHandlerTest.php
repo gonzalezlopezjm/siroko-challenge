@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Search;
 
+use App\Catalog\Application\Query\GetProduct\GetProductQuery;
+use App\Catalog\Application\Query\ProductDTO;
 use App\Search\Application\Query\SearchProducts\SearchProductsHandler;
 use App\Search\Application\Query\SearchProducts\SearchProductsQuery;
 use App\Search\Application\Query\SearchResponseDTO;
+use App\Search\Application\Query\SearchResultDTO;
 use App\Search\Domain\Model\ParsedSearchQuery;
 use App\Search\Domain\Model\SearchResult;
 use App\Search\Domain\Port\EmbeddingPort;
@@ -16,13 +19,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 final class SearchProductsHandlerTest extends TestCase
 {
     private EmbeddingPort&MockObject $embeddingPort;
     private SemanticSearchPort&MockObject $semanticSearchPort;
     private QueryExpanderPort&MockObject $queryExpander;
-    private MessageBusInterface&MockObject $eventBus;
+    private MessageBusInterface&MockObject $bus;
+    private CacheInterface&MockObject $cache;
     private SearchProductsHandler $handler;
 
     protected function setUp(): void
@@ -30,15 +37,28 @@ final class SearchProductsHandlerTest extends TestCase
         $this->embeddingPort      = $this->createMock(EmbeddingPort::class);
         $this->semanticSearchPort = $this->createMock(SemanticSearchPort::class);
         $this->queryExpander      = $this->createMock(QueryExpanderPort::class);
-        $this->eventBus = $this->createMock(MessageBusInterface::class);
-        $this->eventBus->method('dispatch')->willReturn(new Envelope(new \stdClass()));
+
+        $this->bus = $this->createMock(MessageBusInterface::class);
+        $this->bus->method('dispatch')->willReturnCallback(function (object $message): Envelope {
+            if ($message instanceof GetProductQuery) {
+                $dto = $this->makeProductDTO($message->productId);
+                return (new Envelope($message))->with(new HandledStamp($dto, 'handler'));
+            }
+            return new Envelope($message);
+        });
+
+        $this->cache = $this->createMock(CacheInterface::class);
+        $this->cache->method('get')->willReturnCallback(
+            fn(string $key, callable $fn) => $fn($this->createMock(ItemInterface::class)),
+        );
 
         $this->handler = new SearchProductsHandler(
             embeddingPort:       $this->embeddingPort,
             semanticSearchPort:  $this->semanticSearchPort,
             queryExpander:       $this->queryExpander,
-            eventBus:            $this->eventBus,
+            eventBus:            $this->bus,
             similarityThreshold: 0.7,
+            cache:               $this->cache,
         );
     }
 
@@ -71,7 +91,8 @@ final class SearchProductsHandlerTest extends TestCase
 
         self::assertInstanceOf(SearchResponseDTO::class, $result);
         self::assertCount(1, $result->results);
-        self::assertSame('product-1', $result->results[0]->productId);
+        self::assertInstanceOf(SearchResultDTO::class, $result->results[0]);
+        self::assertSame('product-1', $result->results[0]->product->id);
         self::assertSame(0.95, $result->results[0]->score);
     }
 
@@ -113,5 +134,23 @@ final class SearchProductsHandlerTest extends TestCase
         self::assertInstanceOf(SearchResponseDTO::class, $result);
         self::assertEmpty($result->results);
         self::assertSame(0, $result->resultsCount);
+    }
+
+    private function makeProductDTO(string $id): ProductDTO
+    {
+        return new ProductDTO(
+            id:            $id,
+            name:          'Mallot Mizuno',
+            description:   'Mallot de ciclismo profesional',
+            priceAmount:   4999,
+            priceCurrency: 'EUR',
+            category:      'CYCLING',
+            brand:         'Mizuno',
+            attributes:    [],
+            stock:         10,
+            imageUrl:      null,
+            createdAt:     '2026-01-01T00:00:00+00:00',
+            updatedAt:     '2026-01-01T00:00:00+00:00',
+        );
     }
 }
